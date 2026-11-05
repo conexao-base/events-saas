@@ -24,7 +24,9 @@ export function SignUpForm({
     <Form {...form}>
       <form
         {...props}
+        id='sign-up-form'
         onSubmit={onSubmit}
+        autoComplete='on'
         className={cn('grid gap-3', className)}
       >
         <FormField
@@ -35,10 +37,12 @@ export function SignUpForm({
               <FormLabel>E-mail</FormLabel>
               <FormControl>
                 <Input
-                  type='email'
-                  placeholder='name@example.com'
-                  autoComplete='email'
                   {...field}
+                  id='signup-email'
+                  name='email'
+                  type='email'
+                  placeholder=''
+                  autoComplete='username'
                 />
               </FormControl>
               <FormMessage />
@@ -54,9 +58,11 @@ export function SignUpForm({
               <FormLabel>Senha</FormLabel>
               <FormControl>
                 <PasswordInput
-                  placeholder='********'
-                  autoComplete='new-password'
                   {...field}
+                  id='signup-password'
+                  name='password'
+                  placeholder=''
+                  autoComplete='new-password'
                 />
               </FormControl>
               <FormMessage />
@@ -72,9 +78,11 @@ export function SignUpForm({
               <FormLabel>Confirmar senha</FormLabel>
               <FormControl>
                 <PasswordInput
-                  placeholder='********'
-                  autoComplete='new-password'
                   {...field}
+                  id='confirm-password'
+                  name='confirmPassword'
+                  placeholder=''
+                  autoComplete='new-password'
                 />
               </FormControl>
               <FormMessage />
@@ -82,7 +90,7 @@ export function SignUpForm({
           )}
         />
 
-        <Button className='mt-2' disabled={isLoading}>
+        <Button type='submit' className='mt-2' disabled={isLoading}>
           {isLoading ? <Loader2 className='animate-spin' /> : <UserPlus />}
           {isLoading ? 'Criando conta...' : 'Criar Conta'}
         </Button>
@@ -91,6 +99,7 @@ export function SignUpForm({
           <div className='absolute inset-0 flex items-center'>
             <span className='w-full border-t' />
           </div>
+
           <div className='relative flex justify-center text-xs uppercase'>
             <span className='bg-background px-2 text-muted-foreground'>
               Ou continue com

@@ -27,13 +27,13 @@ export function Dashboard() {
       </Header>
 
       {/* Conteúdo principal */}
-      <Main>
-        <div className='mb-2 flex items-center justify-between space-y-2'>
-          <h1 className='text-2xl font-bold tracking-tight'>Painel</h1>
+      <Main className='mb-10 flex flex-1 flex-col gap-6 md:px-6 lg:px-8 xl:px-10'>
+        <div className='flex flex-wrap items-end justify-between gap-3'>
+          <h1 className='text-3xl font-bold tracking-tight'>Painel</h1>
 
-          <div className='flex items-center space-x-2'>
+        {/*   <div className='flex items-center space-x-2'>
             <Button>Resumo (PDF)</Button>
-          </div>
+          </div> */}
         </div>
 
         <Tabs

@@ -21,16 +21,20 @@ export function Events() {
         <ConfigDrawer />
       </Header>
 
-      <Main className='mb-10 flex flex-1 flex-col gap-6'>
+      <Main className='mb-10 flex flex-1 flex-col gap-6 md:px-6 lg:px-8 xl:px-10'>
         <div className='flex flex-wrap items-end justify-between gap-3'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Eventos</h2>
-            <p className='text-muted-foreground'>
+            <h1 className='text-center text-3xl font-bold tracking-tight md:text-left'>
+              Eventos
+            </h1>
+            <p className='text-center text-muted-foreground md:text-left'>
               Gerencie seus eventos e acompanhe as inscrições.
             </p>
           </div>
 
-          <EventsPrimaryButtons />
+          <div className='mt-auto w-full md:mt-0 md:w-auto'>
+            <EventsPrimaryButtons />
+          </div>
         </div>
 
         <div className='-mb-2 flex items-center justify-between gap-3'>

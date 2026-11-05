@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { isAxiosError } from 'axios'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useNavigate } from '@tanstack/react-router'
 import { authService } from '@/services/auth.service'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
@@ -14,7 +13,7 @@ interface UseSignInOptions {
 
 export function useSignIn({ redirectTo = '/' }: UseSignInOptions = {}) {
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
+
   const { auth } = useAuthStore()
 
   const form = useForm<SignInFormValues>({
@@ -38,10 +37,7 @@ export function useSignIn({ redirectTo = '/' }: UseSignInOptions = {}) {
 
       toast.success('Login realizado com sucesso!')
 
-      await navigate({
-        to: redirectTo,
-        replace: true,
-      })
+      window.location.assign(redirectTo)
     } catch (error) {
       const message = isAxiosError<{ message?: string }>(error)
         ? (error.response?.data?.message ??

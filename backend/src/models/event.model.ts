@@ -64,4 +64,10 @@ export class EventModel {
 
     return event as EventRecord | undefined;
   }
+
+  static async findPublicById(
+    eventId: string,
+  ): Promise<EventRecord | undefined> {
+    return db<EventRecord>("events").where({ id: eventId }).first();
+  }
 }

@@ -30,27 +30,27 @@ export function RegistrationFormPreview() {
   const { fields } = useRegistration()
 
   return (
-    <section className='p-5 sm:p-6'>
-      <h2 className='text-lg font-semibold'>Faça sua inscrição</h2>
+    <section className='p-4'>
+      <h2 className='text-base font-semibold'>Faça sua inscrição</h2>
 
-      <p className='mt-1 text-sm text-muted-foreground'>
+      <p className='mt-0.5 text-xs text-muted-foreground'>
         Preencha os dados abaixo para garantir sua vaga no evento.
       </p>
 
       <form
-        className='mt-5 space-y-4'
+        className='mt-3 space-y-3'
         onSubmit={(event) => event.preventDefault()}
       >
-        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+        <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
           {fields.map((field) => (
-            <div key={field.id} className='min-w-0 space-y-1.5'>
+            <div key={field.id} className='min-w-0 space-y-1'>
               <label
                 htmlFor={`preview-${field.id}`}
-                className='text-sm font-medium'
+                className='text-xs font-medium'
               >
                 {field.label}
                 {field.required && (
-                  <span className='ml-1 text-destructive'>*</span>
+                  <span className='ml-0.5 text-destructive'>*</span>
                 )}
               </label>
 
@@ -60,7 +60,7 @@ export function RegistrationFormPreview() {
                   required={field.required}
                   defaultValue=''
                   disabled
-                  className='h-10 w-full cursor-not-allowed rounded-md border bg-background px-3 text-sm opacity-70'
+                  className='h-8 w-full cursor-not-allowed rounded-md border bg-background px-2.5 text-xs opacity-70'
                   style={inputStyle}
                 >
                   <option value='' disabled>
@@ -80,7 +80,7 @@ export function RegistrationFormPreview() {
                   required={field.required}
                   placeholder={getPlaceholder(field.type, field.label)}
                   disabled
-                  className='h-10 w-full cursor-not-allowed rounded-md border bg-background px-3 text-sm opacity-70'
+                  className='h-8 w-full cursor-not-allowed rounded-md border bg-background px-2.5 text-xs opacity-70'
                   style={inputStyle}
                 />
               )}
@@ -91,13 +91,13 @@ export function RegistrationFormPreview() {
         <button
           type='button'
           disabled
-          className='h-10 w-full cursor-not-allowed rounded-md px-4 text-sm font-medium text-white opacity-70'
+          className='h-9 w-full cursor-not-allowed rounded-md px-3 text-xs font-medium text-white'
           style={{ backgroundColor: 'var(--event-primary)' }}
         >
-          Enviar inscrição
+          Confirmar inscrição
         </button>
 
-        <p className='text-center text-xs text-muted-foreground'>
+        <p className='text-center text-[10px] text-muted-foreground'>
           Pré-visualização do formulário de inscrição.
         </p>
       </form>
