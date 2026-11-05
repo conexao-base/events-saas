@@ -1,6 +1,8 @@
+import { parseDateInput } from '@/utils/parseDateInput'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { DatePickerField } from './date-picker-field'
 import { useInfo } from './info-provider'
 
 export function InfoBasicForm() {
@@ -27,28 +29,20 @@ export function InfoBasicForm() {
       </div>
 
       <div className='grid gap-4 sm:grid-cols-2'>
-        <div className='space-y-2'>
-          <Label htmlFor='startDate'>Data de início</Label>
-          <Input
-            id='startDate'
-            type='date'
-            value={formData.startDate}
-            onChange={(event) => updateField('startDate', event.target.value)}
-            required
-          />
-        </div>
+        <DatePickerField
+          id='startDate'
+          label='Data de início'
+          value={formData.startDate}
+          onChange={(value) => updateField('startDate', value)}
+        />
 
-        <div className='space-y-2'>
-          <Label htmlFor='endDate'>Data de término</Label>
-          <Input
-            id='endDate'
-            type='date'
-            value={formData.endDate}
-            onChange={(event) => updateField('endDate', event.target.value)}
-            min={formData.startDate || undefined}
-            required
-          />
-        </div>
+        <DatePickerField
+          id='endDate'
+          label='Data de término'
+          value={formData.endDate}
+          onChange={(value) => updateField('endDate', value)}
+          minDate={parseDateInput(formData.startDate)}
+        />
       </div>
 
       <div className='space-y-2'>
@@ -62,12 +56,12 @@ export function InfoBasicForm() {
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='description'>Descrição</Label>
+        <Label htmlFor='description'>Informações Gerais</Label>
         <Textarea
           id='description'
           value={formData.description}
           onChange={(event) => updateField('description', event.target.value)}
-          placeholder='Conte um pouco sobre o evento, o objetivo e o público alvo..'
+          placeholder='Fique livre para falar sobre o evento, o objetivo, prazos e o público alvo..'
           rows={6}
           className='min-h-36 resize-y'
         />

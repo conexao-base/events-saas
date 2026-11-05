@@ -29,9 +29,12 @@ export function UserAuthForm({
   return (
     <Form {...form}>
       <form
+        {...props}
+        id='sign-in-form'
+        method='post'
+        autoComplete='on'
         onSubmit={onSubmit}
         className={cn('grid gap-3', className)}
-        {...props}
       >
         <FormField
           control={form.control}
@@ -41,10 +44,12 @@ export function UserAuthForm({
               <FormLabel>E-mail</FormLabel>
               <FormControl>
                 <Input
-                  type='email'
-                  placeholder='name@example.com'
-                  autoComplete='email'
                   {...field}
+                  id='email'
+                  name='email'
+                  type='email'
+                  placeholder=''
+                  autoComplete='username'
                 />
               </FormControl>
               <FormMessage />
@@ -60,9 +65,11 @@ export function UserAuthForm({
               <FormLabel>Senha</FormLabel>
               <FormControl>
                 <PasswordInput
-                  placeholder='Digite sua senha'
-                  autoComplete='current-password'
                   {...field}
+                  id='password'
+                  name='password'
+                  placeholder=''
+                  autoComplete='current-password'
                 />
               </FormControl>
               <FormMessage />

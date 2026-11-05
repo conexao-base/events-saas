@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
+import { CalendarPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function EventsPrimaryButtons() {
@@ -7,7 +7,7 @@ export function EventsPrimaryButtons() {
     <Button asChild className='space-x-1'>
       <Link to='/events/new/info'>
         <span>Criar Evento</span>
-        <Plus size={18} />
+        <CalendarPlus size={18} />
       </Link>
     </Button>
   )

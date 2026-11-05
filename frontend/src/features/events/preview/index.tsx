@@ -45,13 +45,13 @@ export function Preview({ eventId }: PreviewProps) {
         <ConfigDrawer />
       </Header>
 
-      <Main className='mb-10 flex flex-1 flex-col gap-6'>
-        <h1 className='text-2xl font-bold tracking-tight'>
+      <Main className='mb-10 flex flex-1 flex-col gap-6 md:px-6 lg:px-8 xl:px-10'>
+         <h1 className='text-center text-3xl font-bold tracking-tight md:text-left'>
           {eventId ? 'Editar Evento' : 'Criar Evento'}
         </h1>
 
-        <Card>
-          <CardHeader>
+        <Card className='md:p-2 lg:p-3 xl:p-4'>
+          <CardHeader className='mt-2'>
             <div className='space-y-1'>
               <h2 className='text-lg font-semibold tracking-tight'>
                 Visualização do Formulário

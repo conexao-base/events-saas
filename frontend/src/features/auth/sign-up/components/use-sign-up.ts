@@ -1,23 +1,17 @@
 import { useState } from 'react'
+import { isAxiosError } from 'axios'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useNavigate } from '@tanstack/react-router'
-import { isAxiosError } from 'axios'
-import { toast } from 'sonner'
 import { authService } from '@/services/auth.service'
+import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { signUpSchema, type SignUpFormValues } from './sign-up.schema'
 
 export function useSignUp() {
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
 
-  const setAccessToken = useAuthStore(
-    (state) => state.auth.setAccessToken
-  )
-  const setUser = useAuthStore(
-    (state) => state.auth.setUser
-  )
+  const setAccessToken = useAuthStore((state) => state.auth.setAccessToken)
+  const setUser = useAuthStore((state) => state.auth.setUser)
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -50,10 +44,7 @@ export function useSignUp() {
 
       toast.success('Conta criada com sucesso!')
 
-      await navigate({
-        to: '/',
-        replace: true,
-      })
+      window.location.assign('/')
     } catch (error: unknown) {
       const message = isAxiosError<{ message?: string }>(error)
         ? error.response?.data?.message

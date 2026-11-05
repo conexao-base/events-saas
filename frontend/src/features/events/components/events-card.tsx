@@ -1,5 +1,7 @@
+import { Link } from '@tanstack/react-router'
 import type { ApiEvent } from '@/services/event.service'
-import { ArrowUpRight, CalendarDays, Users } from 'lucide-react'
+import { CalendarDays, ExternalLink, Info, Users } from 'lucide-react'
+import { formatDate } from '@/utils/formatDate'
 
 type Event = ApiEvent & {
   color?: string
@@ -11,32 +13,10 @@ type EventsCardProps = {
   onClick: () => void
 }
 
-function formatDate(date: string) {
-  if (!date) return ''
-
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(new Date(date))
-}
-
 export function EventsCard({ event, onClick }: EventsCardProps) {
   return (
-    <article
-      onClick={onClick}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onClick()
-        }
-      }}
-      role='button'
-      tabIndex={0}
-      className='group cursor-pointer overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-md'
-    >
-      <div className='flex h-32 items-center justify-center bg-muted/40'>
+    <article className='group overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-md'>
+      <div className='relative flex h-32 items-center justify-center bg-muted/40'>
         <div
           className={`flex size-16 items-center justify-center rounded-2xl ${
             event.color ?? 'bg-primary/10 text-primary'
@@ -60,10 +40,28 @@ export function EventsCard({ event, onClick }: EventsCardProps) {
             </p>
           </div>
 
-          <ArrowUpRight
-            size={18}
-            className='shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5'
-          />
+          <div className='flex shrink-0 items-center gap-2'>
+            <Link
+              to='/event/$eventId'
+              params={{ eventId: event.id }}
+              target='_blank'
+              aria-label='Visualizar página pública do evento'
+              title='Visualizar página pública'
+              className='flex size-9 items-center justify-center rounded-lg border bg-background text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-foreground'
+            >
+              <ExternalLink size={14} />
+            </Link>
+
+            <button
+              type='button'
+              onClick={onClick}
+              aria-label='Configurações gerais do evento'
+              title='Configurações gerais'
+              className='flex size-9 items-center justify-center rounded-lg border bg-background text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-foreground'
+            >
+              <Info size={14} />
+            </button>
+          </div>
         </div>
 
         <div className='flex items-center justify-between border-t pt-3'>

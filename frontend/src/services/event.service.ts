@@ -1,4 +1,5 @@
 import { api } from '@/lib/api'
+import { publicApi } from '@/lib/public-api'
 import type { RegistrationFieldType } from '@/features/events/registration/types/registration'
 
 export interface EventInfoDTO {
@@ -71,6 +72,12 @@ export const eventService = {
 
   async findById(id: string): Promise<ApiEvent> {
     const { data } = await api.get<EventResponse>(`/events/${id}`)
+
+    return data.event
+  },
+
+  async findPublicById(id: string): Promise<ApiEvent> {
+    const { data } = await publicApi.get<EventResponse>(`/public/events/${id}`)
 
     return data.event
   },

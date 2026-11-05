@@ -1,5 +1,5 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 export type InfoFormData = {
   name: string
@@ -22,9 +22,11 @@ type InfoProviderProps = {
 const InfoContext = createContext<InfoContextType | null>(null)
 
 export function InfoProvider({ children, initialData }: InfoProviderProps) {
-  const [formData, setFormData] = useState<InfoFormData>(() => ({
-    ...initialData,
-  }))
+  const [formData, setFormData] = useState<InfoFormData>(initialData)
+
+  useEffect(() => {
+    setFormData(initialData)
+  }, [initialData])
 
   return (
     <InfoContext.Provider value={{ formData, setFormData }}>

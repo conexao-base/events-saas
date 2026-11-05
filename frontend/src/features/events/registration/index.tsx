@@ -44,16 +44,20 @@ function RegistrationContent({ eventId }: RegistrationProps) {
   }
 
   return (
-    <Main className='flex flex-1 flex-col gap-6'>
-      <h1 className='text-2xl font-bold tracking-tight'>
+    <Main className='mb-10 flex flex-1 flex-col gap-6 md:px-6 lg:px-8 xl:px-10'>
+     <h1 className='text-center text-3xl font-bold tracking-tight md:text-left'>
         {eventId ? 'Editar Evento' : 'Criar Evento'}
       </h1>
 
-      <Card>
-        <CardHeader className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+      <Card className='md:p-2 lg:p-3 xl:p-4'>
+        <CardHeader className='mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <RegistrationHeader />
 
-          <Button type='button' onClick={addField} className='w-full sm:w-auto'>
+          <Button
+            type='button'
+            onClick={addField}
+            className='hidden sm:flex sm:w-auto'
+          >
             <Plus className='mr-2 size-4' />
             Adicionar campo
           </Button>
@@ -61,6 +65,15 @@ function RegistrationContent({ eventId }: RegistrationProps) {
 
         <CardContent>
           <RegistrationFieldList />
+
+          <Button
+            type='button'
+            onClick={addField}
+            className='mt-4 w-full sm:hidden'
+          >
+            <Plus className='mr-2 size-4' />
+            Adicionar campo
+          </Button>
         </CardContent>
 
         <CardFooter className='flex justify-between gap-3 border-t px-6 py-4'>

@@ -1,4 +1,4 @@
-import { CalendarDays, Mail, Phone, Shirt, Type } from 'lucide-react'
+import { CalendarDays, List, Mail, Phone, Type } from 'lucide-react'
 import type { RegistrationFieldType } from '@/features/events/registration/types/registration'
 
 interface FieldIconProps {
@@ -21,7 +21,7 @@ export function FieldIcon({ type }: FieldIconProps) {
       return <CalendarDays {...props} />
 
     case 'select':
-      return <Shirt {...props} />
+      return <List {...props} />
 
     default:
       return <Type {...props} />

@@ -13,21 +13,24 @@ export function SignIn2() {
             <h1 className='text-xl font-medium'>Conexão</h1>
           </div>
         </div>
+
         <div className='mx-auto flex w-full max-w-sm flex-col justify-center space-y-2'>
-          <div className='flex flex-col space-y-2 text-start'>
-            <h2 className='text-lg font-semibold tracking-tight'>Entrar</h2>
+          <div className='flex flex-col space-y-2 text-center'>
+            <h2 className='text-2xl font-semibold tracking-tight'>Entrar</h2>
+
             <p className='text-sm text-muted-foreground'>
-              Insira seu e-mail e senha abaixo para fazer login{' '}
-              <br className='max-sm:hidden' /> sua conta. Não tem uma conta?{' '}
+              Não tem uma conta?{' '}
               <Link
                 to='/sign-up'
-                className='text-nowrap underline underline-offset-4 hover:text-primary'
+                className='font-medium text-nowrap underline underline-offset-4 hover:text-primary'
               >
                 Criar conta
               </Link>
             </p>
           </div>
+
           <UserAuthForm />
+
           <p className='px-8 text-center text-sm text-muted-foreground'>
             Ao clicar em "Entrar", você concorda com nossos{' '}
             <a
@@ -61,6 +64,7 @@ export function SignIn2() {
           height={1151}
           alt='Shadcn-Admin'
         />
+
         <img
           src={dashboardDark}
           className='hidden dark:block'

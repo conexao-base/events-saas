@@ -1,17 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { z } from "zod";
 import { UserModel } from "../models/user.model.js";
+import { loginSchema, registerSchema } from "../schemas/auth.schema.js";
 import { AuthService } from "../services/auth.service.js";
-
-const registerSchema = z.object({
-  email: z.email(),
-  password: z.string().min(8).max(72),
-});
-
-const loginSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1),
-});
 
 export const AuthController = {
   async register(req: Request, res: Response, next: NextFunction) {

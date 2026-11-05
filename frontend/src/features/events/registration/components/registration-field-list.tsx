@@ -47,7 +47,7 @@ export function RegistrationFieldList() {
         items={fields.map((field) => field.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className='space-y-2'>
+        <div className='space-y-3'>
           {fields.map((field, index) => (
             <RegistrationFieldItem key={field.id} field={field} index={index} />
           ))}

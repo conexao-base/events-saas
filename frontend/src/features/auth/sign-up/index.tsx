@@ -14,25 +14,26 @@ export function SignUp() {
   return (
     <AuthLayout>
       <Card className='max-w-sm gap-4'>
-        <CardHeader>
-          <CardTitle className='text-lg tracking-tight'>
+        <CardHeader className='text-center'>
+          <CardTitle className='text-2xl font-semibold tracking-tight'>
             Criar uma conta
           </CardTitle>
+
           <CardDescription>
-            Digite seu e-mail e senha para criar uma conta.
-            <br />
             Já tem uma conta?{' '}
             <Link
-              to='/sign-in'
-              className='underline underline-offset-4 hover:text-primary'
+              to='/sign-in-2'
+              className='font-medium underline underline-offset-4 hover:text-primary'
             >
               Entrar
             </Link>
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           <SignUpForm />
         </CardContent>
+
         <CardFooter>
           <p className='px-8 text-center text-sm text-muted-foreground'>
             Ao criar uma conta, você concorda com nossos{' '}
