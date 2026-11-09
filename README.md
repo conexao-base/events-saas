@@ -10,6 +10,7 @@ O SaaS Retiro permite criar eventos personalizados, configurar formulários de i
 - Personalização das páginas de eventos.
 - Formulários de inscrição personalizados.
 - Estrutura para inscrições e pagamentos online.
+- Gerenciamento de participantes.
 
 ## Tecnologias
 
@@ -17,12 +18,16 @@ O SaaS Retiro permite criar eventos personalizados, configurar formulários de i
 - Node.js e Express
 - PostgreSQL
 - Docker
+- Knex.js
 
 ## Como executar
 
 ### 1. Pré-requisitos
 
-Instale o [Git](https://git-scm.com/) e o [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+Instale as seguintes ferramentas:
+
+- [Git](https://git-scm.com/)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 ### 2. Clone o repositório
 
@@ -33,7 +38,7 @@ cd saas-retiro
 
 ### 3. Configure o ambiente
 
-Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+Crie um arquivo `.env` na raiz do projeto:
 
 ```env
 NODE_ENV=development
@@ -47,44 +52,78 @@ DB_PASSWORD=sua_senha
 JWT_SECRET=sua_chave_secreta
 JWT_EXPIRES_IN=7d
 
-SEED_ADMIN_NAME=Administrador
 SEED_ADMIN_EMAIL=admin@example.com
 SEED_ADMIN_PASSWORD=sua_senha_admin
 ```
 
-Substitua os valores de exemplo por credenciais próprias. Não compartilhe o arquivo `.env`.
+Substitua os valores de exemplo por credenciais próprias.
+
+O e-mail e a senha definidos em `SEED_ADMIN_EMAIL` e `SEED_ADMIN_PASSWORD` serão utilizados para criar a conta inicial de administrador.
 
 ### 4. Inicie a aplicação
+
+Execute:
 
 ```bash
 docker compose up --build -d
 ```
 
-### 5. Acesse a plataforma
+Aguarde os containers iniciarem.
+
+### 5. Execute as migrations
+
+Com os containers em execução, execute:
+
+```bash
+docker compose exec backend npm run db:migrate
+```
+
+Esse comando cria as tabelas necessárias no PostgreSQL.
+
+### 6. Execute os seeders
+
+Em seguida, execute:
+
+```bash
+docker compose exec backend npm run db:seed
+```
+
+Esse comando cria automaticamente o usuário administrador utilizando as credenciais configuradas no `.env`.
+
+### 7. Acesse a aplicação
 
 - **Aplicação:** http://localhost:5173
 - **API:** http://localhost:4000
+- **Documentação Swagger:** http://localhost:4000/api-docs
 
-### 6. Gerencie os containers
+Faça login utilizando o e-mail e a senha definidos nas variáveis `SEED_ADMIN_EMAIL` e `SEED_ADMIN_PASSWORD`.
 
-Para visualizar os logs:
+### 8. Gerencie os containers
+
+Visualizar os logs:
 
 ```bash
 docker compose logs -f
 ```
 
-Para parar a aplicação:
+Parar os containers:
 
 ```bash
 docker compose down
+```
+
+Iniciar novamente:
+
+```bash
+docker compose up -d
 ```
 
 ## Estrutura do projeto
 
 ```text
 saas-retiro/
-├── frontend/
 ├── backend/
+├── frontend/
 ├── compose.yaml
 ├── .env
 └── README.md
