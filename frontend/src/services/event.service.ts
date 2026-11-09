@@ -6,6 +6,7 @@ export interface EventInfoDTO {
   name: string
   description: string
   location: string
+  price: string
   startDate: string
   endDate: string
 }
@@ -39,8 +40,10 @@ export interface ApiEvent {
   location: string | null
   start_date: string
   end_date: string
+  price: number | string | null
   registration_fields: RegistrationFieldDTO[]
   appearance: EventAppearanceDTO
+  status: 'draft' | 'published'
 }
 
 interface EventResponse {
@@ -64,6 +67,10 @@ export const eventService = {
     return data.event
   },
 
+  async remove(id: string): Promise<void> {
+    await api.delete(`/events/${id}`)
+  },
+
   async findAll(): Promise<ApiEvent[]> {
     const { data } = await api.get<EventsResponse>('/events')
 
@@ -78,6 +85,17 @@ export const eventService = {
 
   async findPublicById(id: string): Promise<ApiEvent> {
     const { data } = await publicApi.get<EventResponse>(`/public/events/${id}`)
+
+    return data.event
+  },
+
+  async updateStatus(
+    id: string,
+    status: 'draft' | 'published'
+  ): Promise<ApiEvent> {
+    const { data } = await api.patch<EventResponse>(`/events/${id}/status`, {
+      status,
+    })
 
     return data.event
   },

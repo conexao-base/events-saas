@@ -18,6 +18,8 @@ export async function up(knex: Knex): Promise<void> {
     table.date("start_date").nullable();
     table.date("end_date").nullable();
 
+    table.decimal("price", 10, 2).nullable();
+
     table.jsonb("registration_fields").notNullable().defaultTo("[]");
 
     table

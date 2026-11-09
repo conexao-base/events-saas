@@ -2,7 +2,8 @@ export type RegistrationFieldType =
   | "text"
   | "email"
   | "phone"
-  | "date"
+  | "cpf"
+  | "city"
   | "select";
 
 export type RegistrationField = {
@@ -24,6 +25,7 @@ export type CreateEventData = {
     name: string;
     description?: string;
     location?: string;
+    price: number | null;
     startDate?: string;
     endDate?: string;
   };
@@ -44,6 +46,7 @@ export type EventRecord = {
   registration_fields: RegistrationField[];
   appearance: EventAppearance;
   status: "draft" | "published";
+  price: string | null;
   created_at: Date;
   updated_at: Date;
 };

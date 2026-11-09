@@ -17,7 +17,8 @@
 
     /* Alias */
     "paths": {
-      "@/*": ["./src/*"]
+    "@/*": ["./src/*"],
+    "@conexao/shared/*": ["../shared/*"]
     },
 
     /* Linting */

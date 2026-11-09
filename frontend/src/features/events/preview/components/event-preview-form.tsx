@@ -1,4 +1,6 @@
 import type { CSSProperties } from 'react'
+import { CalendarDays, MapPin, Tag } from 'lucide-react'
+import { formatCurrency } from '@/utils/formatCurrency'
 import { formatDate } from '@/utils/formatDate'
 import { useInfo } from '../../info/components/info-provider'
 import { usePreview } from './preview-provider'
@@ -8,7 +10,7 @@ export function EventPreviewForm() {
   const { formData } = useInfo()
   const { appearance } = usePreview()
 
-  const primaryColor = appearance.primaryColor || '#245C43'
+  const primaryColor = appearance.primaryColor
 
   const dateRange = [
     formData.startDate && formatDate(formData.startDate),
@@ -16,6 +18,8 @@ export function EventPreviewForm() {
   ]
     .filter(Boolean)
     .join(' a ')
+
+  const formattedPrice = formatCurrency(formData.price)
 
   const eventStyle = {
     '--event-primary': primaryColor,
@@ -26,7 +30,6 @@ export function EventPreviewForm() {
       className='min-w-0 overflow-hidden rounded-lg border bg-background'
       style={eventStyle}
     >
-      {/* Header */}
       <div
         className='relative flex h-40 flex-col justify-end overflow-hidden bg-cover bg-center p-4 text-white sm:p-5'
         style={{
@@ -50,13 +53,30 @@ export function EventPreviewForm() {
           {formData.name || 'Nome do evento'}
         </h2>
 
-        <div className='mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-white/90'>
-          {dateRange && <span>{dateRange}</span>}
-          {formData.location && <span>{formData.location}</span>}
+        <div className='mt-2 flex flex-wrap gap-x-3 gap-y-2 text-xs text-white/90'>
+          {dateRange && (
+            <span className='flex items-center gap-1.5'>
+              <CalendarDays className='size-3.5 shrink-0' />
+              {dateRange}
+            </span>
+          )}
+
+          {formData.location && (
+            <span className='flex items-center gap-1.5'>
+              <MapPin className='size-3.5 shrink-0' />
+              {formData.location}
+            </span>
+          )}
+
+          {formattedPrice && (
+            <span className='flex items-center gap-1.5'>
+              <Tag className='size-3.5 shrink-0' />
+              R$ {formattedPrice}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Descrição */}
       {formData.description && (
         <div className='border-b px-4 py-3 text-foreground'>
           <p className='text-xs leading-relaxed whitespace-pre-wrap'>

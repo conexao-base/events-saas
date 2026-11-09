@@ -232,7 +232,7 @@ export function ClientsActionDialog({
                 name='amount'
                 render={({ field }) => (
                   <FormItem className='min-w-0'>
-                    <FormLabel>Valor da inscrição (R$)</FormLabel>
+                    <FormLabel>Valor (R$)</FormLabel>
                     <FormControl>
                       <Input
                         inputMode='decimal'

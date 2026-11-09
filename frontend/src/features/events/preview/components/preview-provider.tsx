@@ -1,9 +1,13 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
+import {
+  getEventFormDraft,
+  updateEventFormDraft,
+} from '../../event-form-storage'
 import {
   defaultAppearance,
-  PreviewAppearance,
-  PreviewContextType,
-  PreviewProviderProps,
+  type PreviewAppearance,
+  type PreviewContextType,
+  type PreviewProviderProps,
 } from '../types/preview'
 
 const PreviewContext = createContext<PreviewContextType | null>(null)
@@ -14,8 +18,12 @@ export function PreviewProvider({
 }: PreviewProviderProps) {
   const [appearance, setAppearance] = useState<PreviewAppearance>(() => ({
     ...defaultAppearance,
+    ...getEventFormDraft().appearance,
     ...initialAppearance,
   }))
+  useEffect(() => {
+    updateEventFormDraft({ appearance })
+  }, [appearance])
 
   return (
     <PreviewContext.Provider value={{ appearance, setAppearance }}>

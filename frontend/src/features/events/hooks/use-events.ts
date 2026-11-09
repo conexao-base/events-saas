@@ -1,28 +1,11 @@
-import { useEffect, useState } from 'react'
-import { eventService, type ApiEvent } from '@/services/event.service'
-import { toast } from 'sonner'
+import { useQuery } from '@tanstack/react-query'
+import { eventService } from '@/services/event.service'
 
 export function useEvents() {
-  const [events, setEvents] = useState<ApiEvent[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: events = [], isLoading } = useQuery({
+    queryKey: ['events'],
+    queryFn: eventService.findAll,
+  })
 
-  useEffect(() => {
-    async function loadEvents() {
-      try {
-        const data = await eventService.findAll()
-        setEvents(data)
-      } catch {
-        toast.error('Não foi possível carregar os eventos.')
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    void loadEvents()
-  }, [])
-
-  return {
-    events,
-    isLoading,
-  }
+  return { events, isLoading }
 }

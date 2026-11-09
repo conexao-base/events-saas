@@ -4,7 +4,7 @@ export const registrationFieldSchema = z
   .object({
     id: z.string().trim().min(1).max(100),
     label: z.string().trim().min(1).max(120),
-    type: z.enum(["text", "email", "phone", "date", "select"]),
+    type: z.enum(["text", "email", "phone", "cpf", "city", "date", "select"]),
     required: z.boolean(),
     options: z.array(z.string().trim().min(1).max(100)).max(100).optional(),
   })
@@ -26,10 +26,13 @@ export const eventSchema = z
       location: z.string().trim().max(255).optional().default(""),
       startDate: z.iso.date().optional().or(z.literal("")),
       endDate: z.iso.date().optional().or(z.literal("")),
+      price: z.string().default(""),
     }),
+
     registration: z.object({
       fields: z.array(registrationFieldSchema).max(100),
     }),
+
     appearance: z.object({
       primaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/),
       coverImage: z.union([z.url(), z.literal("")]).default(""),
@@ -57,5 +60,9 @@ export const eventSchema = z
       });
     }
   });
+
+export const updateEventStatusSchema = z.object({
+  status: z.enum(["draft", "published"]),
+});
 
 export type EventInput = z.infer<typeof eventSchema>;

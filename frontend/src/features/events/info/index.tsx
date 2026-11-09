@@ -7,9 +7,12 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { completeStep } from '../event-form-steps'
+import { useEventFormValidation } from '../event-form-validation-provider'
 import { useInfoForm } from '../hooks/use-info-form'
 import { InfoBasicForm } from './components/info-basic-form'
 import { InfoHeader } from './components/info-header'
+import { useInfo } from './components/info-provider'
 
 type InfoProps = {
   eventId?: string
@@ -18,8 +21,14 @@ type InfoProps = {
 function InfoContent({ eventId }: InfoProps) {
   const navigate = useNavigate()
   const { isLoading } = useInfoForm(eventId)
+  const { formData } = useInfo()
+  const { validateInfo } = useEventFormValidation()
 
   function handleNext() {
+    if (!validateInfo(formData)) return
+
+    completeStep('info')
+
     if (eventId) {
       navigate({
         to: '/events/$eventId/registration',

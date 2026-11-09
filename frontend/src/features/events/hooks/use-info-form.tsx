@@ -13,6 +13,7 @@ export function useInfoForm(eventId?: string) {
       name: event.name ?? '',
       description: event.description ?? '',
       location: event.location ?? '',
+      price: event.price != null ? String(event.price).replace('.', ',') : '',
       startDate: event.start_date?.slice(0, 10) ?? '',
       endDate: event.end_date?.slice(0, 10) ?? '',
     })

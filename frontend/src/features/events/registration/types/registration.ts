@@ -1,5 +1,11 @@
 export type RegistrationFieldType =
-  'text' | 'email' | 'phone' | 'date' | 'select'
+  | 'text'
+  | 'email'
+  | 'phone'
+  | 'cpf'
+  | 'city'
+  | 'date'
+  | 'select'
 
 export type RegistrationField = {
   id: string
