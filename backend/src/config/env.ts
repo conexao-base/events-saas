@@ -19,6 +19,8 @@ const envSchema = z.object({
   SEED_ADMIN_NAME: z.string().optional(),
   SEED_ADMIN_EMAIL: z.string().optional(),
   SEED_ADMIN_PASSWORD: z.string().optional(),
+
+  API_URL: z.string().url().default("http://localhost:4000"),
 });
 
 export const env = envSchema.parse(process.env);
