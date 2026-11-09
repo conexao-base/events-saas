@@ -1,13 +1,12 @@
 import type { ReactNode } from 'react'
 import type { RegistrationField } from '@/features/events/registration/types/registration'
+import { EventFormValidationProvider } from './event-form-validation-provider'
 import {
   InfoProvider,
   type InfoFormData,
 } from './info/components/info-provider'
-import {
-  PreviewProvider,
-  type PreviewAppearance,
-} from './preview/components/preview-provider'
+import { PreviewProvider } from './preview/components/preview-provider'
+import type { PreviewAppearance } from './preview/types/preview'
 import { RegistrationProvider } from './registration/components/registration-provider'
 
 export interface EventFormInitialData {
@@ -25,6 +24,7 @@ const initialInfo: InfoFormData = {
   name: '',
   description: '',
   location: '',
+  price: '',
   startDate: '',
   endDate: '',
 }
@@ -48,6 +48,24 @@ const initialFields: RegistrationField[] = [
     type: 'phone',
     required: true,
   },
+  {
+    id: 'cpf',
+    label: 'CPF',
+    type: 'cpf',
+    required: true,
+  },
+  {
+    id: 'birth-date',
+    label: 'Data de nascimento',
+    type: 'date',
+    required: true,
+  },
+  {
+    id: 'city',
+    label: 'Cidade',
+    type: 'city',
+    required: true,
+  },
 ]
 
 const initialAppearance: PreviewAppearance = {
@@ -61,16 +79,18 @@ export function EventFormProvider({
   initialData,
 }: EventFormProviderProps) {
   return (
-    <InfoProvider initialData={initialData?.info ?? initialInfo}>
-      <RegistrationProvider
-        initialFields={initialData?.registration_fields ?? initialFields}
-      >
-        <PreviewProvider
-          initialAppearance={initialData?.appearance ?? initialAppearance}
+    <EventFormValidationProvider>
+      <InfoProvider initialData={initialData?.info ?? initialInfo}>
+        <RegistrationProvider
+          initialFields={initialData?.registration_fields ?? initialFields}
         >
-          {children}
-        </PreviewProvider>
-      </RegistrationProvider>
-    </InfoProvider>
+          <PreviewProvider
+            initialAppearance={initialData?.appearance ?? initialAppearance}
+          >
+            {children}
+          </PreviewProvider>
+        </RegistrationProvider>
+      </InfoProvider>
+    </EventFormValidationProvider>
   )
 }

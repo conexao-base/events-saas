@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createFileRoute, notFound, Outlet } from '@tanstack/react-router'
 import { eventService } from '@/services/event.service'
 import { EventFormProvider } from '@/features/events/event-form-provider'
 
@@ -41,11 +41,7 @@ function NewEventLayout() {
   }
 
   if (isError || !initialData) {
-    return (
-      <div className='p-6 text-destructive'>
-        Não foi possível carregar o evento.
-      </div>
-    )
+    throw notFound()
   }
 
   return (

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { PublicEventController } from "../controllers/public-controler.js";
+import { PublicEventController } from "../controllers/public-event.controler.js";
 
 const publicEventRoutes = Router();
 

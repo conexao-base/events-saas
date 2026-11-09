@@ -1,5 +1,6 @@
 import { db } from "../config/database.js";
 import type { CreateEventData, EventRecord } from "../types/event.types.js";
+import { parsePrice } from "../utils/pase-price.js";
 
 export class EventModel {
   static async create(
@@ -14,6 +15,7 @@ export class EventModel {
         location: data.info.location || null,
         start_date: data.info.startDate || null,
         end_date: data.info.endDate || null,
+        price: parsePrice(data.info.price),
         registration_fields: JSON.stringify(data.registration.fields),
         appearance: JSON.stringify(data.appearance),
       })
@@ -56,6 +58,7 @@ export class EventModel {
         location: data.info.location || null,
         start_date: data.info.startDate || null,
         end_date: data.info.endDate || null,
+        price: parsePrice(data.info.price),
         registration_fields: JSON.stringify(data.registration.fields),
         appearance: JSON.stringify(data.appearance),
         updated_at: db.fn.now(),
@@ -69,5 +72,33 @@ export class EventModel {
     eventId: string,
   ): Promise<EventRecord | undefined> {
     return db<EventRecord>("events").where({ id: eventId }).first();
+  }
+
+  static async delete(eventId: string, userId: string): Promise<void> {
+    await db("events")
+      .where({
+        id: eventId,
+        user_id: userId,
+      })
+      .delete();
+  }
+
+  static async updateStatus(
+    eventId: string,
+    userId: string,
+    status: "draft" | "published",
+  ): Promise<EventRecord | undefined> {
+    const [event] = await db("events")
+      .where({
+        id: eventId,
+        user_id: userId,
+      })
+      .update({
+        status,
+        updated_at: db.fn.now(),
+      })
+      .returning("*");
+
+    return event as EventRecord | undefined;
   }
 }

@@ -1,10 +1,10 @@
 /// <reference types="vitest/config" />
-import tailwindcss from '@tailwindcss/vite'
-import { tanstackRouter } from '@tanstack/router-plugin/vite'
-import react from '@vitejs/plugin-react'
-import { playwright } from '@vitest/browser-playwright'
 import path from 'path'
 import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import { playwright } from '@vitest/browser-playwright'
 
 export default defineConfig({
   plugins: [
@@ -19,14 +19,17 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@conexao/shared': path.resolve(__dirname, '../shared'),
     },
   },
 
-  // Docker: detectar alterações nos arquivos do Windows
   server: {
     host: '0.0.0.0',
     watch: {
       usePolling: true,
+    },
+    fs: {
+      allow: ['..'],
     },
   },
 

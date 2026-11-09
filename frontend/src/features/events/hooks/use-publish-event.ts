@@ -5,13 +5,15 @@ import type { CreateEventDTO } from '@/services/event.service'
 import { eventService } from '@/services/event.service'
 import { toast } from 'sonner'
 import type { RegistrationField } from '@/features/events/registration/types/registration'
-import type { PreviewAppearance } from '../preview/components/preview-provider'
+import { PreviewAppearance } from '../preview/types/preview'
 
 type UsePublishEventProps = {
   eventId?: string
 }
 
-type PublishEventPayload = CreateEventDTO
+type PublishEventPayload = CreateEventDTO & {
+  status: 'published'
+}
 
 type UsePublishEventParams = {
   formData: CreateEventDTO['info']
@@ -33,6 +35,7 @@ export function usePublishEvent({ eventId }: UsePublishEventProps) {
       info: formData,
       registration: { fields },
       appearance,
+      status: 'published',
     }
 
     try {

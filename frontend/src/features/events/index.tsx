@@ -4,7 +4,7 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { EventsCard } from './components/events-card'
+import { EventCardWithActions } from './components/event-card-with-actions'
 import { EventsPrimaryButtons } from './components/events-primary-button'
 import { EventsProvider } from './components/events-provider'
 import { useEvents } from './hooks/use-events'
@@ -28,11 +28,11 @@ export function Events() {
               Eventos
             </h1>
             <p className='text-center text-muted-foreground md:text-left'>
-              Gerencie seus eventos e acompanhe as inscrições.
+              Organize seus eventos e acompanhe as inscrições.
             </p>
           </div>
 
-          <div className='mt-auto w-full md:mt-0 md:w-auto'>
+          <div className='mt-auto flex w-full justify-end md:mt-0 md:w-auto'>
             <EventsPrimaryButtons />
           </div>
         </div>
@@ -54,7 +54,7 @@ export function Events() {
 
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3'>
           {events.map((event) => (
-            <EventsCard
+            <EventCardWithActions
               key={event.id}
               event={event}
               onClick={() =>

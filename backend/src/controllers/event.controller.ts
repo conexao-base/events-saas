@@ -65,4 +65,38 @@ export class EventController {
       next(error);
     }
   }
+
+  static async updateStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.auth!.userId;
+      const eventId = req.params.id;
+
+      const event = await EventService.updateStatus(userId, eventId, req.body);
+
+      res.status(200).json({ event });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async remove(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const userId = req.auth!.userId;
+      const eventId = req.params.id;
+
+      await EventService.remove(userId, eventId);
+
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -2,11 +2,14 @@ import { useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, ArrowRight, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { FieldError } from '@/components/ui/field-error'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { completeStep } from '../event-form-steps'
+import { useEventFormValidation } from '../event-form-validation-provider'
 import { RegistrationFieldList } from './components/registration-field-list'
 import { RegistrationHeader } from './components/registration-header'
 import { useRegistration } from './components/registration-provider'
@@ -17,7 +20,8 @@ type RegistrationProps = {
 
 function RegistrationContent({ eventId }: RegistrationProps) {
   const navigate = useNavigate()
-  const { addField } = useRegistration()
+  const { addField, fields } = useRegistration()
+  const { validateRegistration, errors } = useEventFormValidation()
 
   function handleBack() {
     if (eventId) {
@@ -32,6 +36,15 @@ function RegistrationContent({ eventId }: RegistrationProps) {
   }
 
   function handleNext() {
+    if (fields.length === 0) {
+      validateRegistration({ fields })
+      return
+    }
+
+    if (!validateRegistration({ fields })) return
+
+    completeStep('registration')
+
     if (eventId) {
       navigate({
         to: '/events/$eventId/preview',
@@ -42,10 +55,9 @@ function RegistrationContent({ eventId }: RegistrationProps) {
 
     navigate({ to: '/events/new/preview' })
   }
-
   return (
     <Main className='mb-10 flex flex-1 flex-col gap-6 md:px-6 lg:px-8 xl:px-10'>
-     <h1 className='text-center text-3xl font-bold tracking-tight md:text-left'>
+      <h1 className='text-center text-3xl font-bold tracking-tight md:text-left'>
         {eventId ? 'Editar Evento' : 'Criar Evento'}
       </h1>
 
@@ -65,6 +77,10 @@ function RegistrationContent({ eventId }: RegistrationProps) {
 
         <CardContent>
           <RegistrationFieldList />
+
+          <div className='mt-3 text-center sm:text-right'>
+            <FieldError error={errors['registration.fields']} />
+          </div>
 
           <Button
             type='button'

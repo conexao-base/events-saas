@@ -1,8 +1,9 @@
 import { useParams } from '@tanstack/react-router'
+import { NotFoundError } from '@/features/errors/not-found-error'
 import { PublicEventView } from '../components/public-event-view'
+import { usePublicEvent } from '../hooks/use-public-event'
 import { PublicFooter } from './public-footer'
 import { PublicHeader } from './public-header'
-import { usePublicEvent } from '../hooks/use-public-event'
 
 export function PublicEventPage() {
   const { eventId } = useParams({
@@ -15,28 +16,14 @@ export function PublicEventPage() {
     return <p className='py-10 text-center'>Carregando evento...</p>
   }
 
-  if (isError || !event) {
-    return (
-      <div className='flex min-h-screen flex-col'>
-        <PublicHeader />
-
-        <main className='flex flex-1 items-center justify-center px-4'>
-          <p className='text-center text-muted-foreground'>
-            Evento não encontrado ou indisponível.
-          </p>
-        </main>
-
-        <PublicFooter />
-      </div>
-    )
-  }
+  const isUnavailable = isError || !event || event.status !== 'published'
 
   return (
     <div className='flex min-h-screen flex-col'>
       <PublicHeader />
 
-      <main className='flex-1'>
-        <PublicEventView event={event} />
+      <main className='flex flex-1 flex-col'>
+        {isUnavailable ? <NotFoundError /> : <PublicEventView event={event} />}
       </main>
 
       <PublicFooter />

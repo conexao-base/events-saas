@@ -1,10 +1,15 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
+import {
+  getEventFormDraft,
+  updateEventFormDraft,
+} from '../../event-form-storage'
 
 export type InfoFormData = {
   name: string
   description: string
   location: string
+  price: string
   startDate: string
   endDate: string
 }
@@ -22,11 +27,14 @@ type InfoProviderProps = {
 const InfoContext = createContext<InfoContextType | null>(null)
 
 export function InfoProvider({ children, initialData }: InfoProviderProps) {
-  const [formData, setFormData] = useState<InfoFormData>(initialData)
+  const [formData, setFormData] = useState<InfoFormData>(() => ({
+    ...initialData,
+    ...getEventFormDraft().info,
+  }))
 
   useEffect(() => {
-    setFormData(initialData)
-  }, [initialData])
+    updateEventFormDraft({ info: formData })
+  }, [formData])
 
   return (
     <InfoContext.Provider value={{ formData, setFormData }}>

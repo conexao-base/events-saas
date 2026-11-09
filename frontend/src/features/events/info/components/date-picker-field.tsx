@@ -15,7 +15,10 @@ interface DatePickerFieldProps {
   label: string
   value: string
   onChange: (value: string) => void
+  primaryColor?: string
   minDate?: Date
+  maxDate?: Date
+  required?: boolean
 }
 
 export function DatePickerField({
@@ -23,7 +26,10 @@ export function DatePickerField({
   label,
   value,
   onChange,
+  primaryColor,
   minDate,
+  maxDate,
+  required,
 }: DatePickerFieldProps) {
   const selectedDate = value ? parseISO(value.slice(0, 10)) : undefined
 
@@ -32,9 +38,21 @@ export function DatePickerField({
       ? selectedDate
       : undefined
 
+  const currentYear = new Date().getFullYear()
+
   return (
-    <div className='space-y-2'>
-      <Label htmlFor={id}>{label}</Label>
+    <div
+      className='space-y-2'
+      style={
+        {
+          '--calendar-primary': primaryColor || 'var(--primary)',
+        } as React.CSSProperties
+      }
+    >
+      <Label htmlFor={id} className='text-foreground'>
+        {label}
+        {required && <span className='ml-1 text-destructive'>*</span>}
+      </Label>
 
       <Popover>
         <PopoverTrigger asChild>
@@ -42,9 +60,10 @@ export function DatePickerField({
             id={id}
             type='button'
             variant='outline'
-            className='w-full justify-start text-left font-normal'
+            className='w-full justify-start border-input bg-background text-left font-normal text-foreground hover:bg-background hover:text-foreground'
           >
-            <CalendarDays className='mr-2 size-4' />
+            <CalendarDays className='mr-2 size-4 text-muted-foreground' />
+
             {validDate
               ? format(validDate, 'dd/MM/yyyy', { locale: ptBR })
               : 'dd/mm/aaaa'}
@@ -59,8 +78,13 @@ export function DatePickerField({
             onSelect={(date) =>
               onChange(date ? format(date, 'yyyy-MM-dd') : '')
             }
-            disabled={minDate ? { before: minDate } : undefined}
+            disabled={(date) =>
+              (!!minDate && date < minDate) || (!!maxDate && date > maxDate)
+            }
             locale={ptBR}
+            selectedColor={primaryColor}
+            startMonth={minDate ?? new Date(currentYear - 100, 0)}
+            endMonth={maxDate ?? new Date(currentYear + 10, 11)}
             initialFocus
           />
         </PopoverContent>

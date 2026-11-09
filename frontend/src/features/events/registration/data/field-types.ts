@@ -7,6 +7,8 @@ export const fieldTypes: {
   { value: 'text', label: 'Texto' },
   { value: 'email', label: 'E-mail' },
   { value: 'phone', label: 'Telefone' },
-  { value: 'date', label: 'Data' },
+  { value: 'cpf', label: 'CPF' },
+  { value: 'city', label: 'Cidade' },
+  { value: 'date', label: 'Data de nascimento' },
   { value: 'select', label: 'Opção (seleção)' },
 ]

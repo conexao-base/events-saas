@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { ApiEvent } from '@/services/event.service'
-import { CalendarDays, MapPin } from 'lucide-react'
+import { CalendarDays, MapPin, Tag } from 'lucide-react'
 import { formatDate } from '@/utils/formatDate'
 import { RegistrationForm } from './registration-form'
 
@@ -9,7 +9,7 @@ type PublicEventViewProps = {
 }
 
 export function PublicEventView({ event }: PublicEventViewProps) {
-  const primaryColor = event.appearance.primaryColor || '#245C43'
+  const primaryColor = event.appearance.primaryColor
 
   const eventStyle = {
     '--event-primary': primaryColor,
@@ -21,6 +21,14 @@ export function PublicEventView({ event }: PublicEventViewProps) {
   ]
     .filter(Boolean)
     .join(' a ')
+
+  const formattedPrice =
+    event.price != null
+      ? Number(event.price).toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        })
+      : null
 
   return (
     <main className='min-h-screen bg-muted/30 lg:py-6' style={eventStyle}>
@@ -63,6 +71,13 @@ export function PublicEventView({ event }: PublicEventViewProps) {
                   {event.location}
                 </span>
               )}
+
+              {formattedPrice && (
+                <span className='flex items-center gap-2'>
+                  <Tag className='size-4' />
+                  {formattedPrice}
+                </span>
+              )}
             </div>
           </header>
 
@@ -82,6 +97,7 @@ export function PublicEventView({ event }: PublicEventViewProps) {
             <RegistrationForm
               eventId={event.id}
               fields={event.registration_fields}
+              primaryColor={event.appearance.primaryColor}
             />
           </section>
         </article>

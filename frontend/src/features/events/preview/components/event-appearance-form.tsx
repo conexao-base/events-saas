@@ -3,8 +3,8 @@ import { usePreview } from './preview-provider'
 export function EventAppearanceForm() {
   const { appearance, setAppearance } = usePreview()
 
-  const primaryColor = appearance.primaryColor || '#245C43'
-
+  const primaryColor = appearance.primaryColor
+  
   return (
     <section className='min-w-0 space-y-6'>
       <div>

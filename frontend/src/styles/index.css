@@ -85,3 +85,8 @@
     height: 0;
   }
 }
+/* Seleção de texto no campo de cidade */
+.city-input::selection {
+  background-color: color-mix(in srgb, var(--city-primary-color) 25%, white);
+  color: inherit;
+}

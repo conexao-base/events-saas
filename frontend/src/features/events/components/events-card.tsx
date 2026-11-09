@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import type { ApiEvent } from '@/services/event.service'
-import { CalendarDays, ExternalLink, Info, Users } from 'lucide-react'
+import { CalendarDays, ExternalLink, Info, Trash2, Users } from 'lucide-react'
 import { formatDate } from '@/utils/formatDate'
+import { EventStatus } from './event-status'
 
 type Event = ApiEvent & {
   color?: string
@@ -11,12 +12,17 @@ type Event = ApiEvent & {
 type EventsCardProps = {
   event: Event
   onClick: () => void
+  onDelete: () => void
 }
 
-export function EventsCard({ event, onClick }: EventsCardProps) {
+export function EventsCard({ event, onClick, onDelete }: EventsCardProps) {
   return (
     <article className='group overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-md'>
       <div className='relative flex h-32 items-center justify-center bg-muted/40'>
+        <div className='absolute top-3 right-3'>
+          <EventStatus eventId={event.id} status={event.status} />
+        </div>
+
         <div
           className={`flex size-16 items-center justify-center rounded-2xl ${
             event.color ?? 'bg-primary/10 text-primary'
@@ -47,9 +53,9 @@ export function EventsCard({ event, onClick }: EventsCardProps) {
               target='_blank'
               aria-label='Visualizar página pública do evento'
               title='Visualizar página pública'
-              className='flex size-9 items-center justify-center rounded-lg border bg-background text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-foreground'
+              className='flex items-center justify-center rounded-lg border-0 bg-transparent text-muted-foreground shadow-none transition-colors hover:bg-transparent'
             >
-              <ExternalLink size={14} />
+              <ExternalLink size={22} />
             </Link>
 
             <button
@@ -57,9 +63,9 @@ export function EventsCard({ event, onClick }: EventsCardProps) {
               onClick={onClick}
               aria-label='Configurações gerais do evento'
               title='Configurações gerais'
-              className='flex size-9 items-center justify-center rounded-lg border bg-background text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-foreground'
+              className='flex items-center justify-center rounded-lg border-0 bg-transparent text-muted-foreground shadow-none transition-colors hover:bg-transparent'
             >
-              <Info size={14} />
+              <Info size={22} />
             </button>
           </div>
         </div>
@@ -68,11 +74,21 @@ export function EventsCard({ event, onClick }: EventsCardProps) {
           <div className='flex items-center gap-2 text-sm text-muted-foreground'>
             <Users size={17} />
             <span>Inscrições</span>
+            <span className='font-semibold text-foreground tabular-nums'>
+              {event.registrations ?? 0}
+            </span>
           </div>
 
-          <span className='font-semibold tabular-nums'>
-            {event.registrations ?? 0}
-          </span>
+          <button
+            type='button'
+            onClick={onDelete}
+            aria-label={`Excluir evento ${event.name}`}
+            title='Excluir evento'
+            className='flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-destructive transition-colors hover:bg-destructive/10'
+          >
+            <Trash2 size={15} />
+            <span>Excluir</span>
+          </button>
         </div>
       </div>
     </article>
