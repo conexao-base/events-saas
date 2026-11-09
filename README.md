@@ -18,7 +18,6 @@ O SaaS Retiro permite criar eventos personalizados, configurar formulários de i
 - Node.js e Express
 - PostgreSQL
 - Docker
-- Knex.js
 
 ## Como executar
 
@@ -49,16 +48,24 @@ DB_NAME=conexao
 DB_USER=conexao
 DB_PASSWORD=sua_senha
 
-JWT_SECRET=sua_chave_secreta
+JWT_SECRET=sua_chave_secreta_com_no_minimo_32_caracteres
 JWT_EXPIRES_IN=7d
 
-SEED_ADMIN_EMAIL=admin@example.com
-SEED_ADMIN_PASSWORD=sua_senha_admin
+SEED_ADMIN_EMAIL=teste@email.com
+SEED_ADMIN_PASSWORD=teste123456
 ```
 
-Substitua os valores de exemplo por credenciais próprias.
+Substitua os valores de exemplo pelas credenciais desejadas.
 
-O e-mail e a senha definidos em `SEED_ADMIN_EMAIL` e `SEED_ADMIN_PASSWORD` serão utilizados para criar a conta inicial de administrador.
+**Validações das credenciais:**
+
+- `JWT_SECRET`: deve conter, no mínimo, 32 caracteres.
+- `SEED_ADMIN_EMAIL`: deve ser um endereço de e-mail válido.
+- `SEED_ADMIN_PASSWORD`: deve conter entre 8 e 72 caracteres.
+
+Os valores `teste@email.com` e `teste123456` são apenas exemplos. Você pode utilizar qualquer outro e-mail e senha que respeitem essas validações.
+
+O e-mail e a senha configurados serão utilizados para criar a conta inicial de administrador.
 
 ### 4. Inicie a aplicação
 
@@ -90,6 +97,8 @@ docker compose exec backend npm run db:seed
 
 Esse comando cria automaticamente o usuário administrador utilizando as credenciais configuradas no `.env`.
 
+Caso o usuário já exista, o seeder será ignorado.
+
 ### 7. Acesse a aplicação
 
 - **Aplicação:** http://localhost:5173
@@ -100,19 +109,19 @@ Faça login utilizando o e-mail e a senha definidos nas variáveis `SEED_ADMIN_E
 
 ### 8. Gerencie os containers
 
-Visualizar os logs:
+**Visualizar os logs:**
 
 ```bash
 docker compose logs -f
 ```
 
-Parar os containers:
+**Parar os containers:**
 
 ```bash
 docker compose down
 ```
 
-Iniciar novamente:
+**Iniciar novamente:**
 
 ```bash
 docker compose up -d
