@@ -5,16 +5,23 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import { playwright } from '@vitest/browser-playwright'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
   plugins: [
-    tanstackRouter({
-      target: 'react',
-      autoCodeSplitting: true,
-    }),
-    react(),
-    tailwindcss(),
-  ],
+  tanstackRouter({
+    target: 'react',
+    autoCodeSplitting: true,
+  }),
+  react(),
+  tailwindcss(),
+  visualizer({
+    filename: './dist/stats.html',
+    open: true,
+    gzipSize: true,
+    brotliSize: true,
+  }),
+],
 
   resolve: {
     alias: {

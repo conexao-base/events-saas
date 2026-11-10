@@ -2,7 +2,6 @@ import { faker } from '@faker-js/faker'
 
 // Dados consistentes entre execuções
 faker.seed(67890)
-faker.locale = 'pt_BR'
 
 export const clients = Array.from({ length: 500 }, () => {
   const firstName = faker.person.firstName()

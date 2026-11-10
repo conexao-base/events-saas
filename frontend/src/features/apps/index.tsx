@@ -1,6 +1,6 @@
 import { type ChangeEvent, useState } from 'react'
 import { getRouteApi } from '@tanstack/react-router'
-import { SlidersHorizontal, ArrowUpAZ, ArrowDownAZ } from 'lucide-react'
+import { ArrowDownAZ, ArrowUpAZ, SlidersHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -35,12 +35,11 @@ export function Apps() {
     sort: initSort = 'asc',
   } = route.useSearch()
   const navigate = route.useNavigate()
-
-  const [sort, setSort] = useState(initSort)
-  const [appType, setAppType] = useState(type)
+  const [sort, setSort] = useState<'asc' | 'desc'>(initSort)
+  const [appType, setAppType] = useState<AppType>(type)
   const [searchTerm, setSearchTerm] = useState(filter)
 
-  const filteredApps = apps
+  const filteredApps = [...apps]
     .sort((a, b) =>
       sort === 'asc'
         ? a.name.localeCompare(b.name)
@@ -56,28 +55,38 @@ export function Apps() {
     .filter((app) => app.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
+    const value = e.target.value
+
+    setSearchTerm(value)
+
     navigate({
       search: (prev) => ({
         ...prev,
-        filter: e.target.value || undefined,
+        filter: value,
       }),
     })
   }
 
   const handleTypeChange = (value: AppType) => {
     setAppType(value)
+
     navigate({
       search: (prev) => ({
         ...prev,
-        type: value === 'all' ? undefined : value,
+        type: value,
       }),
     })
   }
 
-  const handleSortChange = (sort: 'asc' | 'desc') => {
-    setSort(sort)
-    navigate({ search: (prev) => ({ ...prev, sort }) })
+  const handleSortChange = (value: 'asc' | 'desc') => {
+    setSort(value)
+
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        sort: value,
+      }),
+    })
   }
 
   return (

@@ -17,12 +17,14 @@ export function usePublicEvent(id?: string) {
       return
     }
 
+    const eventId = id
+
     async function loadEvent() {
       setIsLoading(true)
       setIsError(false)
 
       try {
-        const data = await publicEventService.findById(id)
+        const data = await publicEventService.findById(eventId)
 
         if (!cancelled) setEvent(data)
       } catch {

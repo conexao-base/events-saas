@@ -30,7 +30,6 @@ export function EventCardWithActions({
         event={event}
         onClick={onClick}
         onDelete={() => setOpen(true)}
-        isDeleting={isDeleting}
       />
 
       <ConfirmDeleteDialog

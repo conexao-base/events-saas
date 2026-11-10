@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -31,7 +30,7 @@ export function Dashboard() {
         <div className='flex flex-wrap items-end justify-between gap-3'>
           <h1 className='text-3xl font-bold tracking-tight'>Painel</h1>
 
-        {/*   <div className='flex items-center space-x-2'>
+          {/*   <div className='flex items-center space-x-2'>
             <Button>Resumo (PDF)</Button>
           </div> */}
         </div>

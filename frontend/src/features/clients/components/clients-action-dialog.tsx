@@ -38,6 +38,7 @@ const formSchema = z.object({
   isEdit: z.boolean(),
 })
 
+type ClientFormInput = z.input<typeof formSchema>
 type ClientForm = z.infer<typeof formSchema>
 
 type ClientActionDialogProps = {
@@ -74,7 +75,7 @@ export function ClientsActionDialog({
 }: ClientActionDialogProps) {
   const isEdit = !!currentRow
 
-  const form = useForm<ClientForm>({
+  const form = useForm<ClientFormInput, unknown, ClientForm>({
     resolver: zodResolver(formSchema),
     defaultValues: currentRow
       ? {

@@ -30,7 +30,7 @@ export function LongText({
   const refCallback = (node: HTMLDivElement | null) => {
     ref.current = node
     if (node && checkOverflow(node)) {
-      queueMicroevent(() => setIsOverflown(true))
+      queueMicrotask(() => setIsOverflown(true))
     }
   }
 

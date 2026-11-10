@@ -30,6 +30,7 @@ function NewEventLayout() {
         location: event.location ?? '',
         startDate: event.start_date.slice(0, 10),
         endDate: event.end_date.slice(0, 10),
+        price: event.price != null ? String(event.price) : '',
       },
       registration_fields: event.registration_fields,
       appearance: event.appearance,

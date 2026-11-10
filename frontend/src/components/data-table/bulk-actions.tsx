@@ -43,7 +43,7 @@ export function DataTableBulkActions<TData>({
       const message = `${selectedCount} ${entityName}${selectedCount > 1 ? 's' : ''} selected. Bulk actions toolbar is available.`
 
       // Use queueMicroevent to defer state update and avoid cascading renders
-      queueMicroevent(() => {
+      queueMicrotask(() => {
         setAnnouncement(message)
       })
 

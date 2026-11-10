@@ -40,18 +40,11 @@ function InfoContent({ eventId }: InfoProps) {
     navigate({ to: '/events/new/registration' })
   }
 
-  if (eventId && isLoading) {
-    return (
-      <Main className='mb-10 flex flex-1 flex-col gap-6'>
-        <p className='text-sm text-muted-foreground'>
-          Carregando dados do evento...
-        </p>
-      </Main>
-    )
-  }
-
   return (
-    <Main className='mb-10 flex flex-1 flex-col gap-6 md:px-6 lg:px-8 xl:px-10'>
+    <Main
+      loading={!!eventId && isLoading}
+      className='mb-10 flex flex-1 flex-col gap-6 md:px-6 lg:px-8 xl:px-10'
+    >
       <h1 className='text-center text-3xl font-bold tracking-tight md:text-left'>
         {eventId ? 'Editar Evento' : 'Criar Evento'}
       </h1>

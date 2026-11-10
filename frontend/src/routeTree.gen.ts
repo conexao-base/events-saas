@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
-import { Route as authOtpRouteImport } from './routes/(auth)/otp'
 import { Route as authSignIn2RouteImport } from './routes/(auth)/sign-in-2'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
@@ -22,6 +21,7 @@ import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
+import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
 import { Route as AuthenticatedClientsIndexRouteImport } from './routes/_authenticated/clients/index'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as AuthenticatedEventsIndexRouteImport } from './routes/_authenticated/events/index'
@@ -49,11 +49,6 @@ const PublicRouteRoute = PublicRouteRouteImport.update({
 const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
   id: '/(auth)/forgot-password',
   path: '/forgot-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const authOtpRoute = authOtpRouteImport.update({
-  id: '/(auth)/otp',
-  path: '/otp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authSignIn2Route = authSignIn2RouteImport.update({
@@ -102,6 +97,11 @@ const AuthenticatedSettingsRouteRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppsIndexRoute = AuthenticatedAppsIndexRouteImport.update({
+  id: '/apps/',
+  path: '/apps/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedClientsIndexRoute =
   AuthenticatedClientsIndexRouteImport.update({
     id: '/clients/',
@@ -196,7 +196,6 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
-  '/otp': typeof authOtpRoute
   '/sign-in-2': typeof authSignIn2Route
   '/sign-up': typeof authSignUpRoute
   '/401': typeof errors401Route
@@ -210,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/event/$eventId': typeof PublicEventEventIdRoute
+  '/apps/': typeof AuthenticatedAppsIndexRoute
   '/clients/': typeof AuthenticatedClientsIndexRoute
   '/events/': typeof AuthenticatedEventsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -223,7 +223,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/forgot-password': typeof authForgotPasswordRoute
-  '/otp': typeof authOtpRoute
   '/sign-in-2': typeof authSignIn2Route
   '/sign-up': typeof authSignUpRoute
   '/401': typeof errors401Route
@@ -237,6 +236,7 @@ export interface FileRoutesByTo {
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/event/$eventId': typeof PublicEventEventIdRoute
+  '/apps': typeof AuthenticatedAppsIndexRoute
   '/clients': typeof AuthenticatedClientsIndexRoute
   '/events': typeof AuthenticatedEventsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
@@ -253,7 +253,6 @@ export interface FileRoutesById {
   '/_public': typeof PublicRouteRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
-  '/(auth)/otp': typeof authOtpRoute
   '/(auth)/sign-in-2': typeof authSignIn2Route
   '/(auth)/sign-up': typeof authSignUpRoute
   '/(errors)/401': typeof errors401Route
@@ -268,6 +267,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_public/event/$eventId': typeof PublicEventEventIdRoute
+  '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/clients/': typeof AuthenticatedClientsIndexRoute
   '/_authenticated/events/': typeof AuthenticatedEventsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -284,7 +284,6 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/forgot-password'
-    | '/otp'
     | '/sign-in-2'
     | '/sign-up'
     | '/401'
@@ -298,6 +297,7 @@ export interface FileRouteTypes {
     | '/settings/account'
     | '/settings/notifications'
     | '/event/$eventId'
+    | '/apps/'
     | '/clients/'
     | '/events/'
     | '/settings/'
@@ -311,7 +311,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/forgot-password'
-    | '/otp'
     | '/sign-in-2'
     | '/sign-up'
     | '/401'
@@ -325,6 +324,7 @@ export interface FileRouteTypes {
     | '/settings/account'
     | '/settings/notifications'
     | '/event/$eventId'
+    | '/apps'
     | '/clients'
     | '/events'
     | '/settings'
@@ -340,7 +340,6 @@ export interface FileRouteTypes {
     | '/_public'
     | '/_authenticated/settings'
     | '/(auth)/forgot-password'
-    | '/(auth)/otp'
     | '/(auth)/sign-in-2'
     | '/(auth)/sign-up'
     | '/(errors)/401'
@@ -355,6 +354,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/notifications'
     | '/_public/event/$eventId'
+    | '/_authenticated/apps/'
     | '/_authenticated/clients/'
     | '/_authenticated/events/'
     | '/_authenticated/settings/'
@@ -370,7 +370,6 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
   authForgotPasswordRoute: typeof authForgotPasswordRoute
-  authOtpRoute: typeof authOtpRoute
   authSignIn2Route: typeof authSignIn2Route
   authSignUpRoute: typeof authSignUpRoute
   errors401Route: typeof errors401Route
@@ -401,13 +400,6 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof authForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/otp': {
-      id: '/(auth)/otp'
-      path: '/otp'
-      fullPath: '/otp'
-      preLoaderRoute: typeof authOtpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/sign-in-2': {
@@ -471,6 +463,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/apps/': {
+      id: '/_authenticated/apps/'
+      path: '/apps'
+      fullPath: '/apps/'
+      preLoaderRoute: typeof AuthenticatedAppsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/clients/': {
@@ -645,6 +644,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEventsEventIdRouteRoute: typeof AuthenticatedEventsEventIdRouteRouteWithChildren
   AuthenticatedEventsNewRouteRoute: typeof AuthenticatedEventsNewRouteRouteWithChildren
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
+  AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedClientsIndexRoute: typeof AuthenticatedClientsIndexRoute
   AuthenticatedEventsIndexRoute: typeof AuthenticatedEventsIndexRoute
 }
@@ -657,6 +657,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEventsNewRouteRoute:
     AuthenticatedEventsNewRouteRouteWithChildren,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
+  AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedClientsIndexRoute: AuthenticatedClientsIndexRoute,
   AuthenticatedEventsIndexRoute: AuthenticatedEventsIndexRoute,
 }
@@ -680,7 +681,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   PublicRouteRoute: PublicRouteRouteWithChildren,
   authForgotPasswordRoute: authForgotPasswordRoute,
-  authOtpRoute: authOtpRoute,
   authSignIn2Route: authSignIn2Route,
   authSignUpRoute: authSignUpRoute,
   errors401Route: errors401Route,

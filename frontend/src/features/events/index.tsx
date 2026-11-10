@@ -5,6 +5,7 @@ import { Main } from '@/components/layout/main'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { EventCardWithActions } from './components/event-card-with-actions'
+import { EventsCardSkeleton } from './components/events-card-skeleton'
 import { EventsPrimaryButtons } from './components/events-primary-button'
 import { EventsProvider } from './components/events-provider'
 import { useEvents } from './hooks/use-events'
@@ -39,7 +40,7 @@ export function Events() {
 
         <div className='-mb-2 flex items-center justify-between gap-3'>
           <p className='text-sm font-medium text-foreground'>
-            {isLoading ? 'Carregando eventos...' : `${events.length} eventos`}
+            {events.length} eventos
           </p>
         </div>
 
@@ -51,20 +52,23 @@ export function Events() {
             </p>
           </div>
         )}
-
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3'>
-          {events.map((event) => (
-            <EventCardWithActions
-              key={event.id}
-              event={event}
-              onClick={() =>
-                navigate({
-                  to: '/events/$eventId/info',
-                  params: { eventId: event.id },
-                })
-              }
-            />
-          ))}
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <EventsCardSkeleton key={index} />
+              ))
+            : events.map((event) => (
+                <EventCardWithActions
+                  key={event.id}
+                  event={event}
+                  onClick={() =>
+                    navigate({
+                      to: '/events/$eventId/info',
+                      params: { eventId: event.id },
+                    })
+                  }
+                />
+              ))}
         </div>
       </Main>
     </EventsProvider>
