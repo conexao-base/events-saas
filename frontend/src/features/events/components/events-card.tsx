@@ -6,7 +6,6 @@ import { EventStatus } from './event-status'
 
 type Event = ApiEvent & {
   color?: string
-  registrations?: number
 }
 
 type EventsCardProps = {
@@ -75,7 +74,7 @@ export function EventsCard({ event, onClick, onDelete }: EventsCardProps) {
             <Users size={17} />
             <span>Inscrições</span>
             <span className='font-semibold text-foreground tabular-nums'>
-              {event.registrations ?? 0}
+              {event.registration_count ?? 0}
             </span>
           </div>
 

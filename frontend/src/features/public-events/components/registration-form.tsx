@@ -1,40 +1,79 @@
+import type { CSSProperties, FormEvent } from 'react'
 import { useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import type { ApiEvent } from '@/services/event.service'
-import {
-  formatRegistrationFieldValue,
-  getRegistrationFieldMaxLength,
-  getRegistrationFieldPlaceholder,
-  getRegistrationInputType,
-} from '@/utils/registration-field.utils'
-import { CityInput } from '@/features/events/components/city-input'
-import { DatePickerField } from '@/features/events/info/components/date-picker-field'
+import { toast } from 'sonner'
+import { useCreateRegistration } from '../hooks/use-create-registrations'
+import { useRegistrationValidation } from '../hooks/use-registration-validation'
+import { RegistrationField } from './registration-field'
 
 type RegistrationFormProps = {
   eventId: string
   fields: ApiEvent['registration_fields']
   primaryColor: string
+  isAuthenticated: boolean
 }
 
 export function RegistrationForm({
+  eventId,
   fields,
   primaryColor,
+  isAuthenticated,
 }: RegistrationFormProps) {
   const [answers, setAnswers] = useState<Record<string, string>>({})
 
-  const inputClassName =
-    'h-10 w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-[var(--event-primary)] focus-visible:ring-2 focus-visible:ring-[var(--event-primary)] focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50'
+  const { errors, validate, clearError, clearErrors } =
+    useRegistrationValidation()
+
+  const createRegistration = useCreateRegistration()
+  const navigate = useNavigate()
 
   function handleChange(fieldId: string, value: string) {
     setAnswers((current) => ({
       ...current,
       [fieldId]: value,
     }))
+
+    clearError(fieldId)
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    if (!validate(fields, answers)) {
+      toast.error('Verifique os campos obrigatórios.')
+      return
+    }
+
+    createRegistration.mutate(
+      { eventId, data: answers },
+      {
+        onSuccess: () => {
+          toast.success('Inscrição realizada com sucesso!')
+
+          if (isAuthenticated) {
+            navigate({ to: '/' })
+            return
+          }
+
+          setAnswers({})
+          clearErrors()
+        },
+        onError: () => {
+          toast.error(
+            'Não foi possível realizar sua inscrição. Tente novamente.'
+          )
+        },
+      }
+    )
   }
 
   return (
     <form
+      onSubmit={handleSubmit}
+      noValidate
       className='space-y-6 overflow-visible'
-      style={{ '--event-primary': primaryColor } as React.CSSProperties}
+      style={{ '--event-primary': primaryColor } as CSSProperties}
     >
       <div className='space-y-1'>
         <h2 className='text-xl font-semibold tracking-tight'>
@@ -48,91 +87,25 @@ export function RegistrationForm({
 
       <div className='grid grid-cols-1 gap-x-6 gap-y-5 overflow-visible sm:grid-cols-2'>
         {fields.map((field) => (
-          <div key={field.id} className='relative min-w-0 space-y-2'>
-            {field.type === 'date' ? (
-              <DatePickerField
-                id={field.id}
-                label={field.label}
-                value={answers[field.id] ?? ''}
-                onChange={(value) => handleChange(field.id, value)}
-                primaryColor={primaryColor}
-                maxDate={new Date()}
-                required={field.required}
-              />
-            ) : (
-              <>
-                <label htmlFor={field.id} className='text-sm font-medium'>
-                  {field.label}
-
-                  {field.required && (
-                    <span className='ml-1 text-destructive'>*</span>
-                  )}
-                </label>
-
-                {field.type === 'city' ? (
-                  <CityInput
-                    value={answers[field.id] ?? ''}
-                    onChange={(value) => handleChange(field.id, value)}
-                    primaryColor={primaryColor}
-                    className={inputClassName}
-                    placeholder='Digite o nome da cidade...'
-                  />
-                ) : field.type === 'select' ? (
-                  <select
-                    id={field.id}
-                    name={field.id}
-                    required={field.required}
-                    value={answers[field.id] ?? ''}
-                    onChange={(event) =>
-                      handleChange(field.id, event.target.value)
-                    }
-                    className={inputClassName}
-                  >
-                    <option value=''>Selecione uma opção</option>
-
-                    {field.options?.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    id={field.id}
-                    name={field.id}
-                    type={getRegistrationInputType(field.type)}
-                    inputMode={
-                      field.type === 'cpf' || field.type === 'phone'
-                        ? 'numeric'
-                        : undefined
-                    }
-                    maxLength={getRegistrationFieldMaxLength(field.type)}
-                    placeholder={getRegistrationFieldPlaceholder(field.type)}
-                    required={field.required}
-                    value={answers[field.id] ?? ''}
-                    onChange={(event) =>
-                      handleChange(
-                        field.id,
-                        formatRegistrationFieldValue(
-                          field.type,
-                          event.target.value
-                        )
-                      )
-                    }
-                    className={inputClassName}
-                  />
-                )}
-              </>
-            )}
-          </div>
+          <RegistrationField
+            key={field.id}
+            field={field}
+            value={answers[field.id] ?? ''}
+            error={errors[field.id]}
+            primaryColor={primaryColor}
+            onChange={(value) => handleChange(field.id, value)}
+          />
         ))}
       </div>
 
       <button
         type='submit'
-        className='mb-2 w-full rounded-md bg-[var(--event-primary)] px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90'
+        disabled={createRegistration.isPending}
+        className='mb-2 w-full rounded-md bg-[var(--event-primary)] px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50'
       >
-        Confirmar inscrição
+        {createRegistration.isPending
+          ? 'Enviando inscrição...'
+          : 'Confirmar inscrição'}
       </button>
     </form>
   )

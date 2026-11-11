@@ -35,7 +35,7 @@ export type CreateEventData = {
   appearance: EventAppearance;
 };
 
-export type EventRecord = {
+export interface EventRecord {
   id: string;
   user_id: string;
   name: string;
@@ -43,10 +43,11 @@ export type EventRecord = {
   location: string | null;
   start_date: string | null;
   end_date: string | null;
+  price: string | null;
+  registration_count: number;
   registration_fields: RegistrationField[];
   appearance: EventAppearance;
   status: "draft" | "published";
-  price: string | null;
   created_at: Date;
   updated_at: Date;
-};
+}

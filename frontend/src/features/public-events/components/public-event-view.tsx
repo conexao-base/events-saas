@@ -6,9 +6,13 @@ import { RegistrationForm } from './registration-form'
 
 type PublicEventViewProps = {
   event: ApiEvent
+  isAuthenticated: boolean
 }
 
-export function PublicEventView({ event }: PublicEventViewProps) {
+export function PublicEventView({
+  event,
+  isAuthenticated,
+}: PublicEventViewProps) {
   const primaryColor = event.appearance.primaryColor
 
   const eventStyle = {
@@ -97,7 +101,8 @@ export function PublicEventView({ event }: PublicEventViewProps) {
             <RegistrationForm
               eventId={event.id}
               fields={event.registration_fields}
-              primaryColor={event.appearance.primaryColor}
+              primaryColor={primaryColor}
+              isAuthenticated={isAuthenticated}
             />
           </section>
         </article>

@@ -2,6 +2,19 @@ import { db } from "../config/database.js";
 import type { CreateEventData, EventRecord } from "../types/event.types.js";
 import { parsePrice } from "../utils/pase-price.js";
 
+function eventQuery() {
+  return db<EventRecord>("events").select(
+    "events.*",
+    db.raw(`
+      (
+        SELECT COUNT(*)::integer
+        FROM registrations
+        WHERE registrations.event_id = events.id
+      ) AS registration_count
+    `),
+  );
+}
+
 export class EventModel {
   static async create(
     userId: string,
@@ -19,26 +32,28 @@ export class EventModel {
         registration_fields: JSON.stringify(data.registration.fields),
         appearance: JSON.stringify(data.appearance),
       })
-      .returning("*");
+      .returning("id");
 
-    return event as EventRecord;
+    const createdEvent = await eventQuery()
+      .where("events.id", event.id)
+      .first();
+
+    return createdEvent as EventRecord;
   }
 
   static async findAllByUser(userId: string): Promise<EventRecord[]> {
-    return db<EventRecord>("events")
-      .where({ user_id: userId })
-      .orderBy("created_at", "desc");
+    return eventQuery()
+      .where("events.user_id", userId)
+      .orderBy("events.created_at", "desc");
   }
 
   static async findByIdAndUser(
     eventId: string,
     userId: string,
   ): Promise<EventRecord | undefined> {
-    return db<EventRecord>("events")
-      .where({
-        id: eventId,
-        user_id: userId,
-      })
+    return eventQuery()
+      .where("events.id", eventId)
+      .andWhere("events.user_id", userId)
       .first();
   }
 
@@ -63,15 +78,17 @@ export class EventModel {
         appearance: JSON.stringify(data.appearance),
         updated_at: db.fn.now(),
       })
-      .returning("*");
+      .returning("id");
 
-    return event as EventRecord | undefined;
+    if (!event) return undefined;
+
+    return EventModel.findByIdAndUser(eventId, userId);
   }
 
   static async findPublicById(
     eventId: string,
   ): Promise<EventRecord | undefined> {
-    return db<EventRecord>("events").where({ id: eventId }).first();
+    return eventQuery().where("events.id", eventId).first();
   }
 
   static async delete(eventId: string, userId: string): Promise<void> {
@@ -97,8 +114,10 @@ export class EventModel {
         status,
         updated_at: db.fn.now(),
       })
-      .returning("*");
+      .returning("id");
 
-    return event as EventRecord | undefined;
+    if (!event) return undefined;
+
+    return EventModel.findByIdAndUser(eventId, userId);
   }
 }
