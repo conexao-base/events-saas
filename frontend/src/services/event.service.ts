@@ -41,6 +41,7 @@ export interface ApiEvent {
   start_date: string
   end_date: string
   price: number | string | null
+  registration_count: number
   registration_fields: RegistrationFieldDTO[]
   appearance: EventAppearanceDTO
   status: 'draft' | 'published'

@@ -1,12 +1,12 @@
 import type { Knex } from "knex";
 
 const seedEvent = {
-  name: "Retiro Renovados",
+  name: "Evento",
   description:
-    "Um tempo de comunhão, aprendizado e renovação espiritual. Participe de momentos de louvor, reflexão e comunhão.",
-  location: "Sítio Recanto da Paz — Ponte Nova, MG",
+    "Um encontro para compartilhar experiências.",
+  location: "Auditório",
   start_date: "2026-11-20",
-  end_date: "2026-11-22",
+  end_date: "2026-11-20",
   registration_fields: [
     {
       id: "full-name",
@@ -27,26 +27,30 @@ const seedEvent = {
       required: true,
     },
     {
+      id: "cpf",
+      label: "CPF",
+      type: "cpf",
+      required: true,
+    },
+    {
       id: "birth-date",
       label: "Data de nascimento",
       type: "date",
       required: false,
     },
     {
-      id: "shirt-size",
-      label: "Tamanho da camiseta",
-      type: "select",
-      required: false,
-      options: ["PP", "P", "M", "G", "GG", "XG"],
+      id: "city",
+      label: "Cidade",
+      type: "city",
+      required: true,
     },
   ],
   appearance: {
     primaryColor: "#245C43",
-    coverImage:
-      "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1600&q=85",
-    logo: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=256&q=85",
+    coverImage: "",
+    logo: "",
   },
-  status: "draft",
+  status: "published",
 };
 
 export async function seed(knex: Knex): Promise<void> {

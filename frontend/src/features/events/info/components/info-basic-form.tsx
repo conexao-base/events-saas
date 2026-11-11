@@ -36,7 +36,6 @@ export function InfoBasicForm() {
           id='name'
           value={formData.name}
           onChange={(event) => updateField('name', event.target.value)}
-          placeholder='Ex.: Retiro de Jovens'
           aria-invalid={!!errors['info.name']}
           required
         />
@@ -81,7 +80,6 @@ export function InfoBasicForm() {
             id='location'
             value={formData.location}
             onChange={(event) => updateField('location', event.target.value)}
-            placeholder='Ex.: Sítio Recanto da Paz'
             aria-invalid={!!errors['info.location']}
             required
           />
@@ -100,7 +98,7 @@ export function InfoBasicForm() {
             inputMode='numeric'
             value={formatCurrency(formData.price)}
             onChange={(event) => updatePrice(event.target.value)}
-            placeholder='Ex.: 150,00'
+            placeholder='R$ 0,00'
             className='tabular-nums'
             aria-invalid={!!errors['info.price']}
             required
@@ -119,7 +117,7 @@ export function InfoBasicForm() {
           id='description'
           value={formData.description}
           onChange={(event) => updateField('description', event.target.value)}
-          placeholder='Fique livre para falar sobre o evento, o objetivo, prazos e o público alvo.'
+          placeholder='Descreva as principais informações sobre o evento...'
           rows={6}
           className='min-h-36 resize-y'
           aria-invalid={!!errors['info.description']}

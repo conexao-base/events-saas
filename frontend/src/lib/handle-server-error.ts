@@ -7,7 +7,7 @@ export function handleServerError(error: unknown) {
     console.log(error)
   }
 
-  let errMsg = 'Something went wrong!'
+  let errMsg = 'Ocorreu um erro inesperado. Tente novamente.'
 
   if (
     error &&
@@ -15,13 +15,17 @@ export function handleServerError(error: unknown) {
     'status' in error &&
     Number(error.status) === 204
   ) {
-    errMsg = 'No content.'
+    errMsg = 'Nenhum conteúdo encontrado.'
   }
 
   if (error instanceof AxiosError) {
     const title = error.response?.data?.title
+    const message = error.response?.data?.message
+
     if (typeof title === 'string' && title.length > 0) {
       errMsg = title
+    } else if (typeof message === 'string' && message.length > 0) {
+      errMsg = message
     }
   }
 

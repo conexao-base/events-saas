@@ -3,6 +3,7 @@ import { authRoutes } from "./auth.routes.js";
 import { eventRoutes } from "./event.routes.js";
 import { ibgeRoutes } from "./ibge.routes.js";
 import { publicEventRoutes } from "./public-event.js";
+import { registrationRoutes } from "./registration.routes.js";
 
 const routes = Router();
 
@@ -17,6 +18,6 @@ routes.use("/auth", authRoutes);
 routes.use("/events", eventRoutes);
 routes.use("/public/events", publicEventRoutes);
 routes.use("/ibge", ibgeRoutes);
+routes.use("/registrations", registrationRoutes);
 
 export { routes };
-
