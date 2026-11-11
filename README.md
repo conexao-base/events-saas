@@ -1,8 +1,8 @@
-# SaaS Retiro
+# SaaS
 
 Plataforma de criação e gerenciamento de eventos para organizações.
 
-O SaaS Retiro permite criar eventos personalizados, configurar formulários de inscrição e centralizar a gestão dos participantes em uma única plataforma, com foco em praticidade e organização.
+O SaaS permite criar eventos personalizados, configurar formulários de inscrição e centralizar a gestão dos participantes em uma única plataforma, com foco em praticidade e organização.
 
 ## Funcionalidades
 
