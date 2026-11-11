@@ -31,8 +31,8 @@ Instale as seguintes ferramentas:
 ### 2. Clone o repositório
 
 ```bash
-git clone https://github.com/conexao-base/saas-retiro.git
-cd saas-retiro
+git clone https://github.com/conexao-base/saas.git
+cd saas
 ```
 
 ### 3. Configure o ambiente
@@ -130,7 +130,7 @@ docker compose up -d
 ## Estrutura do projeto
 
 ```text
-saas-retiro/
+saas/
 ├── backend/
 ├── frontend/
 ├── compose.yaml
