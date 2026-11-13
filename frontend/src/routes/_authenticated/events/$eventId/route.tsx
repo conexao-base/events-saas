@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, notFound, Outlet } from '@tanstack/react-router'
 import { eventService } from '@/services/event.service'
-import { EventFormProvider } from '@/features/events/event-form-provider'
+import { EventFormProvider } from '@/features/events/event-builder/event-form-provider'
 
 export const Route = createFileRoute('/_authenticated/events/$eventId')({
   component: NewEventLayout,

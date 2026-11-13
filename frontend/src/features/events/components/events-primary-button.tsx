@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { CalendarPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { clearEventFormDraft } from '../event-form-storage'
+import { clearEventFormDraft } from '@/features/events/event-builder/event-form-storage'
 
 export function EventsPrimaryButtons() {
   const handleCreateEvent = () => {

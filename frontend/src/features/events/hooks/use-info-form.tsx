@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useInfo } from '../info/components/info-provider'
+import { useInfo } from '@/features/events/event-builder/info/components/info-provider'
 import { useEvent } from './use-event'
 
 export function useInfoForm(eventId?: string) {

@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { publicApi } from '@/lib/public-api'
-import type { RegistrationFieldType } from '@/features/events/registration/types/registration'
+import type { RegistrationFieldType } from '@/features/events/event-builder/registration/types/registration'
 
 export interface EventInfoDTO {
   name: string

@@ -1,3 +1,4 @@
+import { db } from "../config/database.js";
 import { EventModel } from "../models/event.model.js";
 import { RegistrationModel } from "../services/registration.service.js";
 
@@ -5,8 +6,8 @@ import type {
   RegistrationData,
   RegistrationRecord,
   RegistrationStatus,
+  RegistrationWithEvent,
 } from "../types/registration.types.js";
-
 interface RegistrationField {
   id: string;
   type: string;
@@ -110,7 +111,7 @@ export class RegistrationService {
   static async create(
     eventId: string,
     data: RegistrationData,
-  ): Promise<RegistrationRecord> {
+  ): Promise<RegistrationWithEvent> {
     const event = await EventModel.findPublicById(eventId);
 
     if (!event) {
@@ -145,7 +146,7 @@ export class RegistrationService {
     data: RegistrationData,
     price: string,
     status: RegistrationStatus,
-  ): Promise<RegistrationRecord> {
+  ): Promise<RegistrationWithEvent> {
     const event = await EventModel.findByIdAndUser(eventId, userId);
 
     if (!event) {
@@ -179,6 +180,14 @@ export class RegistrationService {
     }
 
     return RegistrationModel.findAllByEvent(eventId);
+  }
+
+  static async findAll(userId: string): Promise<RegistrationWithEvent[]> {
+    return db("registrations")
+      .join("events", "registrations.event_id", "events.id")
+      .where("events.user_id", userId)
+      .select("registrations.*", "events.name as event_name")
+      .orderBy("registrations.created_at", "desc");
   }
 
   static async update(
