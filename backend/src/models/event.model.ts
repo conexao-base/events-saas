@@ -1,5 +1,6 @@
+import type { EventInput } from "../../../shared/schemas/event.schema.js";
 import { db } from "../config/database.js";
-import type { CreateEventData, EventRecord } from "../types/event.types.js";
+import type { EventRecord } from "../types/event.types.js";
 import { parsePrice } from "../utils/pase-price.js";
 
 function eventQuery() {
@@ -16,10 +17,7 @@ function eventQuery() {
 }
 
 export class EventModel {
-  static async create(
-    userId: string,
-    data: CreateEventData,
-  ): Promise<EventRecord> {
+  static async create(userId: string, data: EventInput): Promise<EventRecord> {
     const [event] = await db("events")
       .insert({
         user_id: userId,
@@ -60,7 +58,7 @@ export class EventModel {
   static async update(
     eventId: string,
     userId: string,
-    data: CreateEventData,
+    data: EventInput,
   ): Promise<EventRecord | undefined> {
     const [event] = await db("events")
       .where({

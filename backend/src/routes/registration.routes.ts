@@ -8,10 +8,22 @@ const registrationRoutes = Router();
 registrationRoutes.post("/:eventId", RegistrationController.create);
 
 // Gerenciamento de inscrições
+registrationRoutes.post(
+  "/admin/:eventId",
+  requireAuth,
+  RegistrationController.createByAdmin,
+);
+
 registrationRoutes.get(
   "/event/:eventId",
   requireAuth,
   RegistrationController.findAllByEvent,
+);
+
+registrationRoutes.put(
+  "/:registrationId",
+  requireAuth,
+  RegistrationController.update,
 );
 
 registrationRoutes.patch(

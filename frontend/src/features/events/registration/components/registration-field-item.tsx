@@ -4,6 +4,7 @@ import { Check, GripVertical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { RegistrationField } from '@/features/events/registration/types/registration'
+import { isDefaultField } from '../constants/default-fields'
 import { useRegistrationField } from '../hooks/use-registration-field-item'
 import { FieldIcon } from './field-icons'
 import { RegistrationFieldOptions } from './registration-field-options'
@@ -43,11 +44,14 @@ export function RegistrationFieldItem({
     isDragging,
   } = useSortable({ id: field.id })
 
+  const fixed = isDefaultField(field.id)
+
   const editProps = {
     id: field.id,
     value: field.type,
     label,
     required: field.required,
+    fixed,
     onRequiredChange: toggleRequired,
     onChange: changeType,
     onEdit: toggleEditing,
@@ -83,7 +87,7 @@ export function RegistrationFieldItem({
 
           <FieldIcon type={field.type} />
 
-          {editing ? (
+          {editing && !fixed ? (
             <div className='flex min-w-0 flex-1 items-center gap-1'>
               <Input
                 autoFocus

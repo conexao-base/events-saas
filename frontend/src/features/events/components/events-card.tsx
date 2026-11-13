@@ -1,40 +1,37 @@
 import { Link } from '@tanstack/react-router'
 import type { ApiEvent } from '@/services/event.service'
-import { CalendarDays, ExternalLink, Info, Trash2, Users } from 'lucide-react'
+import { ExternalLink, Info, Trash2, Users } from 'lucide-react'
 import { formatDate } from '@/utils/formatDate'
 import { EventStatus } from './event-status'
 
-type Event = ApiEvent & {
-  color?: string
-}
-
 type EventsCardProps = {
-  event: Event
+  event: ApiEvent
   onClick: () => void
   onDelete: () => void
 }
 
 export function EventsCard({ event, onClick, onDelete }: EventsCardProps) {
+  const coverImage = event.appearance?.coverImage
+  const primaryColor = event.appearance?.primaryColor
+
   return (
     <article className='group overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-md'>
-      <div className='relative flex h-32 items-center justify-center bg-muted/40'>
-        <div className='absolute top-3 right-3'>
+      <div
+        className='relative flex h-32 items-center justify-center bg-muted/40 bg-cover bg-center'
+        style={{
+          backgroundColor: primaryColor || undefined,
+          backgroundImage: coverImage ? `url(${coverImage})` : undefined,
+        }}
+      >
+        <div className='absolute top-3 right-3 rounded-full border-3 border-white/65'>
           <EventStatus eventId={event.id} status={event.status} />
-        </div>
-
-        <div
-          className={`flex size-16 items-center justify-center rounded-2xl ${
-            event.color ?? 'bg-primary/10 text-primary'
-          }`}
-        >
-          <CalendarDays size={30} strokeWidth={1.7} />
         </div>
       </div>
 
       <div className='space-y-4 p-4'>
         <div className='flex items-start justify-between gap-3'>
           <div className='min-w-0'>
-            <h3 className='truncate font-semibold tracking-tight'>
+            <h3 className='truncate text-2xl tracking-tight text-muted-foreground'>
               {event.name}
             </h3>
 
@@ -71,11 +68,18 @@ export function EventsCard({ event, onClick, onDelete }: EventsCardProps) {
 
         <div className='flex items-center justify-between border-t pt-3'>
           <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-            <Users size={17} />
-            <span>Inscrições</span>
-            <span className='font-semibold text-foreground tabular-nums'>
-              {event.registration_count ?? 0}
-            </span>
+            <Link
+              to='/events/$eventId/registrations'
+              params={{ eventId: event.id }}
+              className='flex items-center gap-2 rounded-md text-sm text-muted-foreground transition-colors hover:text-foreground'
+              title='Visualizar inscrições do evento'
+            >
+              <Users size={17} />
+              <span>Inscrições</span>
+              <span className='font-semibold text-foreground tabular-nums'>
+                {event.registration_count ?? 0}
+              </span>
+            </Link>
           </div>
 
           <button

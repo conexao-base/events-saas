@@ -1,3 +1,5 @@
+import { isAxiosError } from 'axios'
+import { useAuthStore } from '@/stores/auth-store'
 import { api } from '@/lib/api'
 
 export interface SignInData {
@@ -38,7 +40,17 @@ export const authService = {
   },
 
   async me() {
-    const response = await api.get<AuthMeResponse>('/auth/me')
-    return response.data.user
+    try {
+      const response = await api.get<AuthMeResponse>('/auth/me')
+      return response.data.user
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.status === 401) {
+        useAuthStore.getState().auth.reset()
+
+        window.location.replace('/auth/login')
+      }
+
+      throw error
+    }
   },
 }

@@ -17,13 +17,16 @@ export function useCityInput(value: string, onChange: (value: string) => void) {
   })
 
   useEffect(() => {
-    if (selected) {
+    const query = value.trim()
+    
+    const isSelectedCity = /\s-\s[A-Z]{2}$/i.test(query)
+
+    if (selected || isSelectedCity) {
       setCities([])
       setOpen(false)
+      setLoading(false)
       return
     }
-
-    const query = value.trim()
 
     if (query.length < 2) {
       setCities([])

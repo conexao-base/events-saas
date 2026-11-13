@@ -37,7 +37,7 @@ export function PublicEventView({
   return (
     <main className='min-h-screen bg-muted/30 lg:py-6' style={eventStyle}>
       <div className='mx-auto max-w-4xl'>
-        <article className='overflow-hidden rounded-none border-0 bg-background shadow-none lg:rounded-xl lg:border lg:shadow-sm'>
+        <article className='overflow-hidden rounded-xl border bg-background shadow-sm'>
           <header
             className='relative flex min-h-64 flex-col justify-end bg-cover bg-center p-6 text-white sm:min-h-80 sm:p-10'
             style={{

@@ -9,6 +9,7 @@ type RegistrationFieldTypeSelectProps = {
   value: RegistrationFieldType
   label: string
   required: boolean
+  fixed?: boolean
   onRequiredChange: (checked: boolean) => void
   onChange: (type: RegistrationFieldType) => void
   onEdit: () => void
@@ -20,6 +21,7 @@ export function RegistrationFieldTypeSelect({
   value,
   label,
   required,
+  fixed = false,
   onRequiredChange,
   onChange,
   onEdit,
@@ -30,10 +32,11 @@ export function RegistrationFieldTypeSelect({
       <select
         aria-label={`Tipo do campo ${label}`}
         value={value}
+        disabled={fixed}
         onChange={(event) =>
           onChange(event.target.value as RegistrationFieldType)
         }
-        className='h-8 w-40 min-w-0 shrink-0 cursor-pointer rounded-md border border-input bg-background px-2 text-xs font-medium transition-colors outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring'
+        className='h-8 w-40 min-w-0 shrink-0 cursor-pointer rounded-md border border-input bg-background px-2 text-xs font-medium transition-colors outline-none hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-60'
       >
         {fieldTypes.map((type) => (
           <option key={type.value} value={type.value}>
@@ -46,6 +49,7 @@ export function RegistrationFieldTypeSelect({
         <Switch
           id={`required-${id}`}
           checked={required}
+          disabled={fixed}
           onCheckedChange={onRequiredChange}
           className='shrink-0'
         />
@@ -59,29 +63,33 @@ export function RegistrationFieldTypeSelect({
       </div>
 
       <div className='ml-auto flex h-8 w-[68px] shrink-0 items-center justify-end gap-0.5'>
-        <Button
-          type='button'
-          variant='ghost'
-          size='icon'
-          className='size-8 shrink-0 text-muted-foreground hover:bg-muted hover:text-foreground'
-          onClick={onEdit}
-          aria-label={`Editar ${label}`}
-          title='Editar nome'
-        >
-          <Pencil className='size-3.5' />
-        </Button>
+        {!fixed && (
+          <>
+            <Button
+              type='button'
+              variant='ghost'
+              size='icon'
+              className='size-8 shrink-0 text-muted-foreground hover:bg-muted hover:text-foreground'
+              onClick={onEdit}
+              aria-label={`Editar ${label}`}
+              title='Editar nome'
+            >
+              <Pencil className='size-3.5' />
+            </Button>
 
-        <Button
-          type='button'
-          variant='ghost'
-          size='icon'
-          className='size-8 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
-          onClick={onDelete}
-          aria-label={`Excluir ${label}`}
-          title='Excluir campo'
-        >
-          <Trash2 className='size-3.5' />
-        </Button>
+            <Button
+              type='button'
+              variant='ghost'
+              size='icon'
+              className='size-8 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
+              onClick={onDelete}
+              aria-label={`Excluir ${label}`}
+              title='Excluir campo'
+            >
+              <Trash2 className='size-3.5' />
+            </Button>
+          </>
+        )}
       </div>
     </div>
   )

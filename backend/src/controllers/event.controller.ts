@@ -1,4 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
+import {
+  eventSchema,
+  updateEventStatusSchema,
+} from "../../../shared/schemas/event.schema.js";
 import { EventService } from "../services/event.service.js";
 
 export class EventController {
@@ -9,7 +13,17 @@ export class EventController {
   ): Promise<void> {
     try {
       const userId = req.auth!.userId;
-      const event = await EventService.create(userId, req.body);
+      const validation = eventSchema.safeParse(req.body);
+
+      if (!validation.success) {
+        res.status(400).json({
+          message: "Dados do evento inválidos.",
+          errors: validation.error.flatten(),
+        });
+        return;
+      }
+
+      const event = await EventService.create(userId, validation.data);
 
       res.status(201).json({ event });
     } catch (error) {
@@ -39,7 +53,7 @@ export class EventController {
   ): Promise<void> {
     try {
       const userId = req.auth!.userId;
-      const eventId = req.params.id;
+      const eventId = req.params.id!;
 
       const event = await EventService.findById(userId, eventId);
 
@@ -56,9 +70,18 @@ export class EventController {
   ): Promise<void> {
     try {
       const userId = req.auth!.userId;
-      const eventId = req.params.id;
+      const eventId = req.params.id!;
+      const validation = eventSchema.safeParse(req.body);
 
-      const event = await EventService.update(userId, eventId, req.body);
+      if (!validation.success) {
+        res.status(400).json({
+          message: "Dados do evento inválidos.",
+          errors: validation.error.flatten(),
+        });
+        return;
+      }
+
+      const event = await EventService.update(userId, eventId, validation.data);
 
       res.status(200).json({ event });
     } catch (error) {
@@ -73,9 +96,22 @@ export class EventController {
   ): Promise<void> {
     try {
       const userId = req.auth!.userId;
-      const eventId = req.params.id;
+      const eventId = req.params.id!;
+      const validation = updateEventStatusSchema.safeParse(req.body);
 
-      const event = await EventService.updateStatus(userId, eventId, req.body);
+      if (!validation.success) {
+        res.status(400).json({
+          message: "Status inválido.",
+          errors: validation.error.flatten(),
+        });
+        return;
+      }
+
+      const event = await EventService.updateStatus(
+        userId,
+        eventId,
+        validation.data,
+      );
 
       res.status(200).json({ event });
     } catch (error) {
@@ -90,7 +126,7 @@ export class EventController {
   ): Promise<void> {
     try {
       const userId = req.auth!.userId;
-      const eventId = req.params.id;
+      const eventId = req.params.id!;
 
       await EventService.remove(userId, eventId);
 
