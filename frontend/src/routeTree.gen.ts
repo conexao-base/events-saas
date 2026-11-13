@@ -37,6 +37,7 @@ import { Route as AuthenticatedEventsEventIdRegistrationRouteImport } from './ro
 import { Route as AuthenticatedEventsNewInfoRouteImport } from './routes/_authenticated/events/new/info'
 import { Route as AuthenticatedEventsNewPreviewRouteImport } from './routes/_authenticated/events/new/preview'
 import { Route as AuthenticatedEventsNewRegistrationRouteImport } from './routes/_authenticated/events/new/registration'
+import { Route as AuthenticatedEventsEventIdRegistrationsIndexRouteImport } from './routes/_authenticated/events/$eventId/registrations/index'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -191,6 +192,12 @@ const AuthenticatedEventsNewRegistrationRoute =
     path: '/registration',
     getParentRoute: () => AuthenticatedEventsNewRouteRoute,
   } as any)
+const AuthenticatedEventsEventIdRegistrationsIndexRoute =
+  AuthenticatedEventsEventIdRegistrationsIndexRouteImport.update({
+    id: '/registrations/',
+    path: '/registrations/',
+    getParentRoute: () => AuthenticatedEventsEventIdRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/events/new/info': typeof AuthenticatedEventsNewInfoRoute
   '/events/new/preview': typeof AuthenticatedEventsNewPreviewRoute
   '/events/new/registration': typeof AuthenticatedEventsNewRegistrationRoute
+  '/events/$eventId/registrations/': typeof AuthenticatedEventsEventIdRegistrationsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
@@ -246,6 +254,7 @@ export interface FileRoutesByTo {
   '/events/new/info': typeof AuthenticatedEventsNewInfoRoute
   '/events/new/preview': typeof AuthenticatedEventsNewPreviewRoute
   '/events/new/registration': typeof AuthenticatedEventsNewRegistrationRoute
+  '/events/$eventId/registrations': typeof AuthenticatedEventsEventIdRegistrationsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -277,6 +286,7 @@ export interface FileRoutesById {
   '/_authenticated/events/new/info': typeof AuthenticatedEventsNewInfoRoute
   '/_authenticated/events/new/preview': typeof AuthenticatedEventsNewPreviewRoute
   '/_authenticated/events/new/registration': typeof AuthenticatedEventsNewRegistrationRoute
+  '/_authenticated/events/$eventId/registrations/': typeof AuthenticatedEventsEventIdRegistrationsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -307,6 +317,7 @@ export interface FileRouteTypes {
     | '/events/new/info'
     | '/events/new/preview'
     | '/events/new/registration'
+    | '/events/$eventId/registrations/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/events/new/info'
     | '/events/new/preview'
     | '/events/new/registration'
+    | '/events/$eventId/registrations'
   id:
     | '__root__'
     | '/_authenticated'
@@ -364,6 +376,7 @@ export interface FileRouteTypes {
     | '/_authenticated/events/new/info'
     | '/_authenticated/events/new/preview'
     | '/_authenticated/events/new/registration'
+    | '/_authenticated/events/$eventId/registrations/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -577,6 +590,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEventsNewRegistrationRouteImport
       parentRoute: typeof AuthenticatedEventsNewRouteRoute
     }
+    '/_authenticated/events/$eventId/registrations/': {
+      id: '/_authenticated/events/$eventId/registrations/'
+      path: '/registrations'
+      fullPath: '/events/$eventId/registrations/'
+      preLoaderRoute: typeof AuthenticatedEventsEventIdRegistrationsIndexRouteImport
+      parentRoute: typeof AuthenticatedEventsEventIdRouteRoute
+    }
   }
 }
 
@@ -603,6 +623,7 @@ interface AuthenticatedEventsEventIdRouteRouteChildren {
   AuthenticatedEventsEventIdInfoRoute: typeof AuthenticatedEventsEventIdInfoRoute
   AuthenticatedEventsEventIdPreviewRoute: typeof AuthenticatedEventsEventIdPreviewRoute
   AuthenticatedEventsEventIdRegistrationRoute: typeof AuthenticatedEventsEventIdRegistrationRoute
+  AuthenticatedEventsEventIdRegistrationsIndexRoute: typeof AuthenticatedEventsEventIdRegistrationsIndexRoute
 }
 
 const AuthenticatedEventsEventIdRouteRouteChildren: AuthenticatedEventsEventIdRouteRouteChildren =
@@ -612,6 +633,8 @@ const AuthenticatedEventsEventIdRouteRouteChildren: AuthenticatedEventsEventIdRo
       AuthenticatedEventsEventIdPreviewRoute,
     AuthenticatedEventsEventIdRegistrationRoute:
       AuthenticatedEventsEventIdRegistrationRoute,
+    AuthenticatedEventsEventIdRegistrationsIndexRoute:
+      AuthenticatedEventsEventIdRegistrationsIndexRoute,
   }
 
 const AuthenticatedEventsEventIdRouteRouteWithChildren =

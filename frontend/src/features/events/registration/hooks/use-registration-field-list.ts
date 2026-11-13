@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { RegistrationField } from '@/features/events/registration/types/registration'
+import { isDefaultField } from '../constants/default-fields'
 
 type UseRegistrationFieldsProps = {
   initialFields: RegistrationField[]
@@ -29,6 +30,8 @@ export function useRegistrationFields({
   }
 
   function updateField(id: string, changes: Partial<RegistrationField>) {
+    if (isDefaultField(id)) return
+
     setFields((current) =>
       current.map((field) =>
         field.id === id ? { ...field, ...changes } : field
@@ -37,6 +40,8 @@ export function useRegistrationFields({
   }
 
   function removeField(id: string) {
+    if (isDefaultField(id)) return
+
     setFields((current) => current.filter((field) => field.id !== id))
   }
 
@@ -46,6 +51,10 @@ export function useRegistrationFields({
       const newIndex = current.findIndex((field) => field.id === overId)
 
       if (oldIndex === -1 || newIndex === -1) {
+        return current
+      }
+
+      if (isDefaultField(activeId) || isDefaultField(overId)) {
         return current
       }
 

@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button'
 import { useNavigate, useRouter } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button'
 
 export function NotFoundError() {
   const navigate = useNavigate()
@@ -15,7 +15,9 @@ export function NotFoundError() {
         <p className='text-center text-muted-foreground'>
           A página que você está procurando
           <br />
-          não existe ou pode ter sido removida.
+          não existe, pode ter sido removida,
+          <br />
+          ou ainda não foi publicada.
         </p>
 
         <div className='mt-6 flex gap-4'>
@@ -23,9 +25,7 @@ export function NotFoundError() {
             Voltar
           </Button>
 
-          <Button onClick={() => navigate({ to: '/' })}>
-            Página inicial
-          </Button>
+          <Button onClick={() => navigate({ to: '/' })}>Rever eventos</Button>
         </div>
       </div>
     </div>

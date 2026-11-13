@@ -2,10 +2,43 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
+  const containerRef = React.useRef<HTMLDivElement>(null)
+  const isDragging = React.useRef(false)
+  const startX = React.useRef(0)
+  const scrollLeft = React.useRef(0)
+
+  function handleMouseDown(event: React.MouseEvent<HTMLDivElement>) {
+    const container = containerRef.current
+
+    if (!container || event.button !== 0) return
+
+    isDragging.current = true
+    startX.current = event.clientX
+    scrollLeft.current = container.scrollLeft
+  }
+
+  function handleMouseMove(event: React.MouseEvent<HTMLDivElement>) {
+    const container = containerRef.current
+
+    if (!container || !isDragging.current) return
+
+    const distance = event.clientX - startX.current
+    container.scrollLeft = scrollLeft.current - distance
+  }
+
+  function stopDragging() {
+    isDragging.current = false
+  }
+
   return (
     <div
+      ref={containerRef}
       data-slot='table-container'
-      className='relative w-full overflow-x-auto'
+      className='relative w-full cursor-grab [scrollbar-width:none] overflow-x-auto [-ms-overflow-style:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden'
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={stopDragging}
+      onMouseLeave={stopDragging}
     >
       <table
         data-slot='table'
@@ -103,11 +136,11 @@ function TableCaption({
 
 export {
   Table,
-  TableHeader,
   TableBody,
+  TableCaption,
+  TableCell,
   TableFooter,
   TableHead,
+  TableHeader,
   TableRow,
-  TableCell,
-  TableCaption,
 }

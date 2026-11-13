@@ -2,9 +2,9 @@ import type { Knex } from "knex";
 
 const seedEvent = {
   name: "Evento",
-  description:
-    "Um encontro para compartilhar experiências.",
+  description: "Um encontro para compartilhar experiências.",
   location: "Auditório",
+  price: "300.00",
   start_date: "2026-11-20",
   end_date: "2026-11-20",
   registration_fields: [
@@ -36,7 +36,7 @@ const seedEvent = {
       id: "birth-date",
       label: "Data de nascimento",
       type: "date",
-      required: false,
+      required: true,
     },
     {
       id: "city",

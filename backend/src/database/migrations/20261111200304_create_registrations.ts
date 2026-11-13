@@ -13,6 +13,9 @@ export async function up(knex: Knex): Promise<void> {
 
     table.jsonb("data").notNullable();
 
+    table.decimal("original_price", 10, 2).notNullable();
+    table.decimal("price", 10, 2).notNullable();
+
     table
       .enu("status", ["pending", "confirmed", "cancelled"])
       .notNullable()

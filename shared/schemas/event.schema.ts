@@ -1,5 +1,32 @@
 import { z } from "zod";
 
+export const registrationFieldSchema = z
+  .object({
+    id: z.string().trim().min(1).max(100),
+    label: z.string().trim().min(1).max(120),
+    type: z.enum(["text", "email", "phone", "cpf", "city", "date", "select"]),
+    required: z.boolean(),
+    options: z.array(z.string().trim().min(1).max(100)).max(100).optional(),
+  })
+  .superRefine((field, context) => {
+    if (field.type === "select" && !field.options?.length) {
+      context.addIssue({
+        code: "custom",
+        path: ["options"],
+        message: "Campos de seleção precisam ter pelo menos uma opção.",
+      });
+    }
+  });
+
+const requiredDefaultFields = [
+  { type: "text", label: "Nome completo" },
+  { type: "email", label: "E-mail" },
+  { type: "phone", label: "Telefone" },
+  { type: "cpf", label: "CPF" },
+  { type: "date", label: "Data de nascimento" },
+  { type: "city", label: "Cidade" },
+] as const;
+
 export const eventSchema = z.object({
   info: z
     .object({
@@ -31,7 +58,7 @@ export const eventSchema = z.object({
       price: z.string().trim().min(1, "O valor da inscrição é obrigatório."),
     })
     .superRefine((info, context) => {
-      if (info.startDate && info.endDate && info.startDate > info.endDate) {
+      if (info.startDate > info.endDate) {
         context.addIssue({
           code: "custom",
           path: ["endDate"],
@@ -43,37 +70,7 @@ export const eventSchema = z.object({
   registration: z
     .object({
       fields: z
-        .array(
-          z
-            .object({
-              id: z.string().trim().min(1).max(100),
-              label: z.string().trim().min(1).max(120),
-              type: z.enum([
-                "text",
-                "email",
-                "phone",
-                "cpf",
-                "city",
-                "date",
-                "select",
-              ]),
-              required: z.boolean(),
-              options: z
-                .array(z.string().trim().min(1).max(100))
-                .max(100)
-                .optional(),
-            })
-            .superRefine((field, context) => {
-              if (field.type === "select" && !field.options?.length) {
-                context.addIssue({
-                  code: "custom",
-                  path: ["options"],
-                  message:
-                    "Campos de seleção precisam ter pelo menos uma opção.",
-                });
-              }
-            }),
-        )
+        .array(registrationFieldSchema)
         .min(1, "Adicione pelo menos um campo de inscrição.")
         .max(100),
     })
@@ -88,12 +85,20 @@ export const eventSchema = z.object({
         });
       }
 
-      if (!registration.fields.some((field) => field.required)) {
-        context.addIssue({
-          code: "custom",
-          path: ["fields"],
-          message: "Pelo menos um campo deve ser obrigatório.",
-        });
+      for (const requiredField of requiredDefaultFields) {
+        const field = registration.fields.find(
+          (item) =>
+            item.type === requiredField.type &&
+            item.label.toLowerCase() === requiredField.label.toLowerCase(),
+        );
+
+        if (!field || !field.required) {
+          context.addIssue({
+            code: "custom",
+            path: ["fields"],
+            message: `O campo "${requiredField.label}" deve existir e ser obrigatório.`,
+          });
+        }
       }
     }),
 
@@ -104,4 +109,9 @@ export const eventSchema = z.object({
   }),
 });
 
+export const updateEventStatusSchema = z.object({
+  status: z.enum(["draft", "published"]),
+});
+
 export type EventInput = z.infer<typeof eventSchema>;
+export type RegistrationField = z.infer<typeof registrationFieldSchema>;

@@ -38,6 +38,7 @@ export function CityInput({
     left: position.left,
     width: position.width,
     zIndex: 9999,
+    pointerEvents: 'auto',
     '--city-primary-color': primaryColor,
   } as CSSProperties
 
@@ -65,6 +66,7 @@ export function CityInput({
           <div
             style={dropdownStyle}
             className='max-h-60 overflow-y-auto rounded-md border bg-popover p-1 shadow-md'
+            onPointerDown={(event) => event.stopPropagation()}
           >
             {cities.length > 0 ? (
               cities.map((city: City) => (

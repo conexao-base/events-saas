@@ -1,21 +1,12 @@
-import { EventModel } from "../models/event.model.js";
 import {
-  eventSchema,
   updateEventStatusSchema,
-} from "../schemas/event.schema.js";
-import type { CreateEventData } from "../types/event.types.js";
+  type EventInput,
+} from "../../../shared/schemas/event.schema.js";
+import { EventModel } from "../models/event.model.js";
 import { AppError } from "../utils/app-error.js";
 
 export class EventService {
-  static async create(userId: string, input: unknown) {
-    const result = eventSchema.safeParse(input);
-
-    if (!result.success) {
-      throw new AppError("Dados do evento inválidos.", 400);
-    }
-
-    const data: CreateEventData = result.data;
-
+  static async create(userId: string, data: EventInput) {
     return EventModel.create(userId, data);
   }
 
@@ -33,15 +24,7 @@ export class EventService {
     return event;
   }
 
-  static async update(userId: string, eventId: string, input: unknown) {
-    const result = eventSchema.safeParse(input);
-
-    if (!result.success) {
-      throw new AppError("Dados do evento inválidos.", 400);
-    }
-
-    const data: CreateEventData = result.data;
-
+  static async update(userId: string, eventId: string, data: EventInput) {
     const existingEvent = await EventModel.findByIdAndUser(eventId, userId);
 
     if (!existingEvent) {

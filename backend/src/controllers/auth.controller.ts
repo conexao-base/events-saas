@@ -41,7 +41,7 @@ export const AuthController = {
       const user = await UserModel.findById(req.auth.userId);
 
       if (!user) {
-        res.status(404).json({ message: "Usuário não encontrado." });
+        res.status(401).json({ message: "Sessão inválida." });
         return;
       }
 

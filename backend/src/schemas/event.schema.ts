@@ -59,6 +59,32 @@ export const eventSchema = z
         message: "Os identificadores dos campos devem ser únicos.",
       });
     }
+
+    // Campos padrão obrigatórios
+    const requiredFields = [
+      { type: "text", label: "Nome completo" },
+      { type: "email", label: "E-mail" },
+      { type: "phone", label: "Telefone" },
+      { type: "cpf", label: "CPF" },
+      { type: "date", label: "Data de nascimento" },
+      { type: "city", label: "Cidade" },
+    ] as const;
+
+    for (const requiredField of requiredFields) {
+      const field = data.registration.fields.find(
+        (item) =>
+          item.type === requiredField.type &&
+          item.label.trim().toLowerCase() === requiredField.label.toLowerCase(),
+      );
+
+      if (!field || !field.required) {
+        context.addIssue({
+          code: "custom",
+          path: ["registration", "fields"],
+          message: `O campo "${requiredField.label}" deve existir e ser obrigatório.`,
+        });
+      }
+    }
   });
 
 export const updateEventStatusSchema = z.object({

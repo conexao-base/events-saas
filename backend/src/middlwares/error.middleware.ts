@@ -20,7 +20,20 @@ export function errorMiddleware(
   }
 
   if (error instanceof AppError) {
-    res.status(error.statusCode).json({ message: error.message });
+    res.status(error.statusCode).json({
+      message: error.message,
+    });
+    return;
+  }
+
+  if (
+    error instanceof Error &&
+    "statusCode" in error &&
+    typeof error.statusCode === "number"
+  ) {
+    res.status(error.statusCode).json({
+      message: error.message,
+    });
     return;
   }
 

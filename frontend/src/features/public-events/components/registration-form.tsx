@@ -1,5 +1,6 @@
 import type { CSSProperties, FormEvent } from 'react'
 import { useState } from 'react'
+import axios from 'axios'
 import { useNavigate } from '@tanstack/react-router'
 import type { ApiEvent } from '@/services/event.service'
 import { toast } from 'sonner'
@@ -59,9 +60,14 @@ export function RegistrationForm({
           setAnswers({})
           clearErrors()
         },
-        onError: () => {
+        onError: (error) => {
+          const message = axios.isAxiosError(error)
+            ? error.response?.data?.message
+            : undefined
+
           toast.error(
-            'Não foi possível realizar sua inscrição. Tente novamente.'
+            message ||
+              'Não foi possível realizar sua inscrição. Tente novamente.'
           )
         },
       }

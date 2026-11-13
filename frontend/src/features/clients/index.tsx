@@ -29,7 +29,7 @@ export function Clients() {
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>Inscrições</h2>
             <p className='text-muted-foreground'>
-              Gerencie as inscrições do seu retiro por aqui.
+              Gerencie as inscrições do seu evento por aqui.
             </p>
           </div>
           <ClientsPrimaryButtons />
