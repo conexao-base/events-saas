@@ -100,6 +100,21 @@ export const RegistrationController = {
     }
   },
 
+  async findAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.auth) {
+        res.status(401).json({ message: "Não autenticado." });
+        return;
+      }
+
+      const registrations = await RegistrationService.findAll(req.auth.userId);
+
+      res.status(200).json({ registrations });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async updateStatus(req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.auth) {

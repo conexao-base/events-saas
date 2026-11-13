@@ -1,4 +1,4 @@
-import type { RegistrationFieldType } from '@/features/events/registration/types/registration'
+import type { RegistrationFieldType } from '@/features/events/event-builder/registration/types/registration'
 
 export function formatRegistrationFieldValue(
   type: RegistrationFieldType,

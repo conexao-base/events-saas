@@ -20,6 +20,9 @@ registrationRoutes.get(
   RegistrationController.findAllByEvent,
 );
 
+// Listagem de todas as inscrições
+registrationRoutes.get("/", requireAuth, RegistrationController.findAll);
+
 registrationRoutes.put(
   "/:registrationId",
   requireAuth,

@@ -7,7 +7,7 @@ import {
   getRegistrationInputType,
 } from '@/utils/registration-field.utils'
 import { CityInput } from '@/features/events/components/city-input'
-import { DatePickerField } from '@/features/events/info/components/date-picker-field'
+import { DatePickerField } from '@/features/events/event-builder/info/components/date-picker-field'
 
 type RegistrationFieldProps = {
   field: ApiEvent['registration_fields'][number]

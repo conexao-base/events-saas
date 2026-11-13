@@ -4,8 +4,8 @@ import { useNavigate } from '@tanstack/react-router'
 import type { CreateEventDTO } from '@/services/event.service'
 import { eventService } from '@/services/event.service'
 import { toast } from 'sonner'
-import type { RegistrationField } from '@/features/events/registration/types/registration'
-import { PreviewAppearance } from '../preview/types/preview'
+import type { RegistrationField } from '@/features/events/event-builder/registration/types/registration'
+import { PreviewAppearance } from '../event-builder/preview/types/preview'
 
 type UsePublishEventProps = {
   eventId?: string

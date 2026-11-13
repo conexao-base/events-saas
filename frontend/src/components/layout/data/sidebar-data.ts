@@ -30,7 +30,7 @@ export const sidebarData: SidebarData = {
         },
         {
           title: 'Inscrições',
-          url: '/clients',
+          url: '/registrations',
           icon: Users,
         },
       ],

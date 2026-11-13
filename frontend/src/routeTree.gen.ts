@@ -22,11 +22,11 @@ import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
-import { Route as AuthenticatedClientsIndexRouteImport } from './routes/_authenticated/clients/index'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as AuthenticatedEventsIndexRouteImport } from './routes/_authenticated/events/index'
 import { Route as AuthenticatedEventsEventIdRouteRouteImport } from './routes/_authenticated/events/$eventId/route'
 import { Route as AuthenticatedEventsNewRouteRouteImport } from './routes/_authenticated/events/new/route'
+import { Route as AuthenticatedRegistrationsIndexRouteImport } from './routes/_authenticated/registrations/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
@@ -103,12 +103,6 @@ const AuthenticatedAppsIndexRoute = AuthenticatedAppsIndexRouteImport.update({
   path: '/apps/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedClientsIndexRoute =
-  AuthenticatedClientsIndexRouteImport.update({
-    id: '/clients/',
-    path: '/clients/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedErrorsErrorRoute =
   AuthenticatedErrorsErrorRouteImport.update({
     id: '/errors/$error',
@@ -131,6 +125,12 @@ const AuthenticatedEventsNewRouteRoute =
   AuthenticatedEventsNewRouteRouteImport.update({
     id: '/events/new',
     path: '/events/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedRegistrationsIndexRoute =
+  AuthenticatedRegistrationsIndexRouteImport.update({
+    id: '/registrations/',
+    path: '/registrations/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSettingsIndexRoute =
@@ -217,8 +217,8 @@ export interface FileRoutesByFullPath {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/event/$eventId': typeof PublicEventEventIdRoute
   '/apps/': typeof AuthenticatedAppsIndexRoute
-  '/clients/': typeof AuthenticatedClientsIndexRoute
   '/events/': typeof AuthenticatedEventsIndexRoute
+  '/registrations/': typeof AuthenticatedRegistrationsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/events/$eventId/info': typeof AuthenticatedEventsEventIdInfoRoute
   '/events/$eventId/preview': typeof AuthenticatedEventsEventIdPreviewRoute
@@ -245,8 +245,8 @@ export interface FileRoutesByTo {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/event/$eventId': typeof PublicEventEventIdRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
-  '/clients': typeof AuthenticatedClientsIndexRoute
   '/events': typeof AuthenticatedEventsIndexRoute
+  '/registrations': typeof AuthenticatedRegistrationsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/events/$eventId/info': typeof AuthenticatedEventsEventIdInfoRoute
   '/events/$eventId/preview': typeof AuthenticatedEventsEventIdPreviewRoute
@@ -277,8 +277,8 @@ export interface FileRoutesById {
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_public/event/$eventId': typeof PublicEventEventIdRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
-  '/_authenticated/clients/': typeof AuthenticatedClientsIndexRoute
   '/_authenticated/events/': typeof AuthenticatedEventsIndexRoute
+  '/_authenticated/registrations/': typeof AuthenticatedRegistrationsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/events/$eventId/info': typeof AuthenticatedEventsEventIdInfoRoute
   '/_authenticated/events/$eventId/preview': typeof AuthenticatedEventsEventIdPreviewRoute
@@ -308,8 +308,8 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/event/$eventId'
     | '/apps/'
-    | '/clients/'
     | '/events/'
+    | '/registrations/'
     | '/settings/'
     | '/events/$eventId/info'
     | '/events/$eventId/preview'
@@ -336,8 +336,8 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/event/$eventId'
     | '/apps'
-    | '/clients'
     | '/events'
+    | '/registrations'
     | '/settings'
     | '/events/$eventId/info'
     | '/events/$eventId/preview'
@@ -367,8 +367,8 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/notifications'
     | '/_public/event/$eventId'
     | '/_authenticated/apps/'
-    | '/_authenticated/clients/'
     | '/_authenticated/events/'
+    | '/_authenticated/registrations/'
     | '/_authenticated/settings/'
     | '/_authenticated/events/$eventId/info'
     | '/_authenticated/events/$eventId/preview'
@@ -485,13 +485,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/clients/': {
-      id: '/_authenticated/clients/'
-      path: '/clients'
-      fullPath: '/clients/'
-      preLoaderRoute: typeof AuthenticatedClientsIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/errors/$error': {
       id: '/_authenticated/errors/$error'
       path: '/errors/$error'
@@ -518,6 +511,13 @@ declare module '@tanstack/react-router' {
       path: '/events/new'
       fullPath: '/events/new'
       preLoaderRoute: typeof AuthenticatedEventsNewRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/registrations/': {
+      id: '/_authenticated/registrations/'
+      path: '/registrations'
+      fullPath: '/registrations/'
+      preLoaderRoute: typeof AuthenticatedRegistrationsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings/': {
@@ -668,8 +668,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEventsNewRouteRoute: typeof AuthenticatedEventsNewRouteRouteWithChildren
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
-  AuthenticatedClientsIndexRoute: typeof AuthenticatedClientsIndexRoute
   AuthenticatedEventsIndexRoute: typeof AuthenticatedEventsIndexRoute
+  AuthenticatedRegistrationsIndexRoute: typeof AuthenticatedRegistrationsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -681,8 +681,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedEventsNewRouteRouteWithChildren,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
-  AuthenticatedClientsIndexRoute: AuthenticatedClientsIndexRoute,
   AuthenticatedEventsIndexRoute: AuthenticatedEventsIndexRoute,
+  AuthenticatedRegistrationsIndexRoute: AuthenticatedRegistrationsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

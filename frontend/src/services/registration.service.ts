@@ -17,6 +17,7 @@ export type UpdateRegistrationData = {
 export interface ApiRegistration {
   id: string
   event_id: string
+  event_name?: string
   data: CreateRegistrationData
   price: string
   status: RegistrationStatus
@@ -59,6 +60,14 @@ export const registrationService = {
     return response.registration
   },
 
+  // Todas as inscrições
+  async getAll(): Promise<ApiRegistration[]> {
+    const { data } = await api.get<RegistrationsResponse>('/registrations')
+
+    return data.registrations
+  },
+
+  // Inscrições por evento
   async getByEvent(eventId: string): Promise<ApiRegistration[]> {
     const { data } = await api.get<RegistrationsResponse>(
       `/registrations/event/${eventId}`

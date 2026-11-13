@@ -13,3 +13,7 @@ export interface RegistrationRecord {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface RegistrationWithEvent extends RegistrationRecord {
+  event_name: string;
+}

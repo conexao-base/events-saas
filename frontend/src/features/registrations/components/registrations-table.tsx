@@ -11,8 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import type { RegistrationFieldDTO } from '@/services/event.service'
-import { type ApiRegistration } from '@/services/registration.service'
+import type { ApiRegistration } from '@/services/registration.service'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -28,26 +27,15 @@ import { createRegistrationsColumns } from './registrations-columns'
 
 type DataTableProps = {
   data: ApiRegistration[]
-  registrationFields: RegistrationFieldDTO[]
   search: Record<string, unknown>
   navigate: NavigateFn
 }
 
-export function RegistrationsTable({
-  data,
-  registrationFields,
-  search,
-  navigate,
-}: DataTableProps) {
+export function RegistrationsTable({ data, search, navigate }: DataTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const columns = useMemo(
-    () => createRegistrationsColumns(registrationFields),
-    [registrationFields]
-  )
-
-  const searchField = registrationFields[0]
+  const columns = useMemo(() => createRegistrationsColumns(), [])
 
   const {
     columnFilters,
@@ -61,15 +49,11 @@ export function RegistrationsTable({
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
     columnFilters: [
-      ...(searchField
-        ? [
-            {
-              columnId: searchField.id,
-              searchKey: searchField.id,
-              type: 'string' as const,
-            },
-          ]
-        : []),
+      {
+        columnId: 'name',
+        searchKey: 'search',
+        type: 'string',
+      },
       {
         columnId: 'status',
         searchKey: 'status',
@@ -114,12 +98,8 @@ export function RegistrationsTable({
     >
       <DataTableToolbar
         table={table}
-        searchPlaceholder={
-          searchField
-            ? `Buscar por ${searchField.label.toLowerCase()}...`
-            : 'Buscar participante...'
-        }
-        searchKey={searchField?.id ?? 'status'}
+        searchPlaceholder='Buscar por nome...'
+        searchKey='name'
         filters={[
           {
             columnId: 'status',
@@ -179,7 +159,7 @@ export function RegistrationsTable({
                   colSpan={table.getVisibleLeafColumns().length}
                   className='h-24 text-center'
                 >
-                  Nenhum participante encontrado.
+                  Nenhuma inscrição encontrada.
                 </TableCell>
               </TableRow>
             )}

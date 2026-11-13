@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { canAccessStep } from '@/features/events/event-form-steps'
-import { Registration } from '@/features/events/registration'
+import { canAccessStep } from '@/features/events/event-builder/event-form-steps'
+import { Registration } from '@/features/events/event-builder/registration'
 
 export const Route = createFileRoute('/_authenticated/events/new/registration')(
   {

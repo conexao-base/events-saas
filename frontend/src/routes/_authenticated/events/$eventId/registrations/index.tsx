@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { createFileRoute } from '@tanstack/react-router'
-import { Registrations } from '@/features/registrations'
+import { Registrations } from '@/features/events/registrations'
 
 const registrationsSearchSchema = z.object({
   page: z.number().optional().catch(1),

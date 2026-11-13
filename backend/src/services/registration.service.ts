@@ -3,6 +3,7 @@ import type {
   RegistrationData,
   RegistrationRecord,
   RegistrationStatus,
+  RegistrationWithEvent,
 } from "../types/registration.types.js";
 
 export class RegistrationModel {
@@ -12,7 +13,7 @@ export class RegistrationModel {
     originalPrice: string,
     price: string,
     status: RegistrationStatus = "pending",
-  ): Promise<RegistrationRecord> {
+  ): Promise<RegistrationWithEvent> {
     const [registration] = await db("registrations")
       .insert({
         event_id: eventId,
@@ -23,7 +24,13 @@ export class RegistrationModel {
       })
       .returning("*");
 
-    return registration as RegistrationRecord;
+    const result = await db("registrations")
+      .join("events", "registrations.event_id", "events.id")
+      .where("registrations.id", registration.id)
+      .select("registrations.*", "events.name as event_name")
+      .first();
+
+    return result as RegistrationWithEvent;
   }
 
   static async hasDuplicate(
@@ -68,6 +75,14 @@ export class RegistrationModel {
     return db<RegistrationRecord>("registrations")
       .where({ event_id: eventId })
       .orderBy("created_at", "desc");
+  }
+
+  static async findAll(userId: string) {
+    return db("registrations")
+      .join("events", "registrations.event_id", "events.id")
+      .where("events.user_id", userId)
+      .select("registrations.*", "events.name as event_name")
+      .orderBy("registrations.created_at", "desc");
   }
 
   static async findById(

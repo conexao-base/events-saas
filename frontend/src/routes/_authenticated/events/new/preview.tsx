@@ -2,8 +2,8 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 import {
   canAccessStep,
   getFirstPendingStep,
-} from '@/features/events/event-form-steps'
-import { Preview } from '@/features/events/preview'
+} from '@/features/events/event-builder/event-form-steps'
+import { Preview } from '@/features/events/event-builder/preview'
 
 export const Route = createFileRoute('/_authenticated/events/new/preview')({
   beforeLoad: () => {
