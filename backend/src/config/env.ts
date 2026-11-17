@@ -21,6 +21,12 @@ const envSchema = z.object({
   SEED_ADMIN_PASSWORD: z.string().optional(),
 
   API_URL: z.string().url().default("http://localhost:4000"),
+
+  ASAAS_API_URL: z.string().url().default("https://api-sandbox.asaas.com/v3"),
+  ASAAS_API_KEY: z.string().optional(),
+  ASAAS_WEBHOOK_TOKEN: z.string().optional(),
+  ASAAS_WEBHOOK_URL: z.string().url().optional(),
+  ASAAS_WEBHOOK_EMAIL: z.string().email().optional(),
 });
 
 export const env = envSchema.parse(process.env);

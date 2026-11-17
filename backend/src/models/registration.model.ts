@@ -1,5 +1,6 @@
 import { db } from "../config/database.js";
 import { EventModel } from "../models/event.model.js";
+import { AsaasCustomerService } from "../services/asaas/asaas-customer.service.js";
 import { RegistrationModel } from "../services/registration.service.js";
 
 import type {
@@ -42,7 +43,9 @@ export class RegistrationService {
 
       if (
         field.required &&
-        (value === undefined || value === null || value.trim() === "")
+        (value === undefined ||
+          value === null ||
+          (typeof value === "string" && value.trim() === ""))
       ) {
         throw new RegistrationServiceError(
           `O campo "${field.label}" é obrigatório.`,
@@ -55,7 +58,7 @@ export class RegistrationService {
         value !== undefined &&
         value !== null &&
         value !== "" &&
-        !field.options?.includes(value)
+        !field.options?.includes(String(value))
       ) {
         throw new RegistrationServiceError(
           `Valor inválido para o campo "${field.label}".`,
@@ -86,10 +89,14 @@ export class RegistrationService {
     const cpfField = fields.find((field) => field.type === "cpf");
 
     const email = emailField
-      ? (data[emailField.id] ?? "").trim().toLowerCase()
+      ? String(data[emailField.id] ?? "")
+          .trim()
+          .toLowerCase()
       : "";
 
-    const cpf = cpfField ? (data[cpfField.id] ?? "").replace(/\D/g, "") : "";
+    const cpf = cpfField
+      ? String(data[cpfField.id] ?? "").replace(/\D/g, "")
+      : "";
 
     const hasDuplicate = await RegistrationModel.hasDuplicate(
       eventId,
@@ -132,14 +139,20 @@ export class RegistrationService {
 
     const originalPrice = event.price == null ? "0" : String(event.price);
 
-    return RegistrationModel.create(
+    const registration = await RegistrationModel.create(
       eventId,
       data,
       originalPrice,
       originalPrice,
     );
-  }
 
+    registration.asaas_customer_id = await AsaasCustomerService.ensureCustomer(
+      registration.id,
+    );
+
+    return registration;
+  }
+  
   static async createByAdmin(
     eventId: string,
     userId: string,
@@ -160,13 +173,20 @@ export class RegistrationService {
 
     const originalPrice = event.price == null ? "0" : String(event.price);
 
-    return RegistrationModel.create(
+    const registration = await RegistrationModel.create(
       eventId,
       data,
       originalPrice,
       price,
       status,
     );
+
+    if (status === "confirmed") {
+      registration.asaas_customer_id =
+        await AsaasCustomerService.ensureCustomer(registration.id);
+    }
+
+    return registration;
   }
 
   static async findAllByEvent(
@@ -237,6 +257,11 @@ export class RegistrationService {
       );
     }
 
+    if (status === "confirmed") {
+      updated.asaas_customer_id =
+        await AsaasCustomerService.ensureCustomer(registrationId);
+    }
+
     return updated;
   }
 
@@ -267,6 +292,11 @@ export class RegistrationService {
 
     if (!updated) {
       throw new RegistrationServiceError("Inscrição não encontrada.", 404);
+    }
+
+    if (status === "confirmed") {
+      updated.asaas_customer_id =
+        await AsaasCustomerService.ensureCustomer(registrationId);
     }
 
     return updated;

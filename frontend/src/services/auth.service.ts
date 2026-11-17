@@ -14,6 +14,7 @@ export interface SignUpData {
 
 export interface AuthUserResponse {
   id: string | number
+  name: string
   email: string
   role?: string[]
   exp?: number
