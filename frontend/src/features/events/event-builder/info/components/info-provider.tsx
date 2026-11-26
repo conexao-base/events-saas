@@ -9,7 +9,6 @@ export type InfoFormData = {
   name: string
   description: string
   location: string
-  price: string
   startDate: string
   endDate: string
 }

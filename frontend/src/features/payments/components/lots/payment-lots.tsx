@@ -15,20 +15,20 @@ export function PaymentLots() {
   const { lots, addLot, updateLot, removeLot } = usePayments()
   const [editingLot, setEditingLot] = useState<PaymentLot | null>(null)
 
-  async function handleSubmit(data: PaymentLotPayload) {
+  function handleSubmit(data: PaymentLotPayload) {
     if (editingLot) {
-      await updateLot(editingLot.id, data)
+      updateLot(editingLot.id, data)
       setEditingLot(null)
       return
     }
 
-    await addLot(data)
+    addLot(data)
   }
 
-  async function handleDelete(lot: PaymentLot) {
+  function handleDelete(lot: PaymentLot) {
     if (!window.confirm(`Deseja excluir o lote "${lot.name}"?`)) return
 
-    await removeLot(lot.id)
+    removeLot(lot.id)
 
     if (editingLot?.id === lot.id) {
       setEditingLot(null)
@@ -40,13 +40,14 @@ export function PaymentLots() {
       <div>
         <h2 className='text-xl font-semibold'>Lotes de inscrição</h2>
         <p className='text-sm text-muted-foreground'>
-          Configure os valores, períodos e limites de inscrições de cada lote.
+          Configure os valores, períodos, limites e formas de pagamento de cada
+          lote.
         </p>
       </div>
 
       <PaymentLotForm
         key={editingLot?.id ?? 'new'}
-        initialData={editingLot}
+        initialData={editingLot ?? undefined}
         onSubmit={handleSubmit}
         onCancel={() => setEditingLot(null)}
       />

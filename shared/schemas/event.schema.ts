@@ -54,8 +54,6 @@ export const eventSchema = z.object({
       endDate: z.iso.date({
         error: "A data de término é obrigatória.",
       }),
-
-      price: z.string().trim().min(1, "O valor da inscrição é obrigatório."),
     })
     .superRefine((info, context) => {
       if (info.startDate > info.endDate) {

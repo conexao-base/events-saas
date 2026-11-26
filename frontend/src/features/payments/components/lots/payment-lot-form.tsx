@@ -12,12 +12,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
-import type {
-  PaymentLot,
-  PaymentLotPayload,
-  PaymentRule,
-  PaymentRulePayload,
-} from '../../payments.types'
+import type { PaymentLot, PaymentLotPayload } from '../../payments.types'
 import { PaymentRuleFields } from '../rules/payment-rule-fields'
 import { PaymentLotFields } from './payment-lot-fields'
 import type { PaymentLotFormData } from './payment-lot-form.types'
@@ -37,14 +32,12 @@ const paymentLotSchema = z.object({
 
 interface PaymentLotFormProps {
   initialData?: PaymentLot
-  initialRule?: PaymentRule
-  onSubmit: (data: PaymentLotPayload, rule: PaymentRulePayload) => void
+  onSubmit: (data: PaymentLotPayload) => void
   onCancel: () => void
 }
 
 export function PaymentLotForm({
   initialData,
-  initialRule,
   onSubmit,
   onCancel,
 }: PaymentLotFormProps) {
@@ -68,39 +61,31 @@ export function PaymentLotForm({
       value: initialData
         ? formatCurrency(String(Math.round(initialData.value * 100)))
         : '',
-      startDate: initialData?.startDate ?? '',
-      endDate: initialData?.endDate ?? '',
+      startDate: initialData?.startDate?.slice(0, 10) ?? '',
+      endDate: initialData?.endDate?.slice(0, 10) ?? '',
       capacity: initialData?.capacity?.toString() ?? '',
       active: initialData?.active ?? true,
-      billingTypes: initialRule?.billingTypes ?? ['PIX'],
-      maxInstallments: initialRule?.maxInstallments ?? 1,
+      billingTypes: initialData?.billingTypes ?? ['PIX'],
+      maxInstallments: initialData?.maxInstallments ?? 1,
     })
-  }, [initialData, initialRule, form])
+  }, [initialData, form])
 
   function handleSubmit(data: PaymentLotFormData) {
-    const lotPayload: PaymentLotPayload = {
+    const payload: PaymentLotPayload = {
       name: data.name.trim(),
       value: Number(data.value.replace(/\D/g, '')) / 100,
       startDate: data.startDate,
       endDate: data.endDate,
       capacity: data.capacity ? Number(data.capacity) : null,
-      active: data.active,
-      position: initialData?.position ?? 0,
-    }
-
-    const rulePayload: PaymentRulePayload = {
-      name: `Pagamento - ${data.name.trim()}`,
-      startDate: data.startDate,
-      endDate: data.endDate,
       billingTypes: data.billingTypes,
       maxInstallments: data.billingTypes.includes('CREDIT_CARD')
         ? data.maxInstallments
         : 1,
       active: data.active,
-      position: initialRule?.position ?? 0,
+      position: initialData?.position ?? 0,
     }
 
-    onSubmit(lotPayload, rulePayload)
+    onSubmit(payload)
   }
 
   return (
