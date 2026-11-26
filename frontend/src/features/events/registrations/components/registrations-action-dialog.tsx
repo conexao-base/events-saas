@@ -57,7 +57,7 @@ export function RegistrationsActionDialog({
   const defaultValues = useMemo(
     () => ({
       status: currentRow?.status ?? 'pending',
-      price: currentRow?.price ?? eventPrice,
+      price: currentRow?.payment_amount ?? eventPrice,
       answers: Object.fromEntries(
         registrationFields.map((field) => [
           field.id,

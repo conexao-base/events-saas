@@ -47,7 +47,16 @@ export function RegistrationForm({
     }
 
     createRegistration.mutate(
-      { eventId, data: answers },
+      {
+        eventId,
+        input: {
+          data: answers,
+          payment: {
+            billingType: 'PIX',
+            installmentCount: 1,
+          },
+        },
+      },
       {
         onSuccess: () => {
           toast.success('Inscrição realizada com sucesso!')

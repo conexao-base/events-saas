@@ -8,10 +8,7 @@ export class PublicEventController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const eventId = req.params.id;
-
-      const event = await PublicEventService.findById(eventId);
-
+      const event = await PublicEventService.findById(req.params.id!);
       res.status(200).json({ event });
     } catch (error) {
       next(error);

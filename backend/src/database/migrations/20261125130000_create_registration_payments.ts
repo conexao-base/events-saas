@@ -11,22 +11,33 @@ export async function up(knex: Knex): Promise<void> {
       .inTable("registrations")
       .onDelete("CASCADE");
 
-    table.string("asaas_payment_id", 50).notNullable().unique();
-    table.string("status", 50).notNullable();
-    table.string("payment_method", 30).nullable();
+    table.string("asaas_payment_id", 80).notNullable().unique();
+    table.string("asaas_installment_id", 80).nullable();
 
-    table.timestamp("billing_date", { useTz: true }).nullable();
+    table.integer("installment_count").nullable();
+
+    table.string("status", 50).notNullable();
+    table.string("payment_method", 30).notNullable();
+
+    table.timestamp("billing_date", { useTz: true }).notNullable();
     table.date("due_date").nullable();
     table.timestamp("paid_at", { useTz: true }).nullable();
 
     table.decimal("value", 10, 2).notNullable();
-    table.text("payment_url").nullable();
+    table.string("payment_url", 1000).nullable();
 
-    table.timestamp("created_at", { useTz: true }).notNullable().defaultTo(knex.fn.now());
-    table.timestamp("updated_at", { useTz: true }).notNullable().defaultTo(knex.fn.now());
+    table
+      .timestamp("created_at", { useTz: true })
+      .notNullable()
+      .defaultTo(knex.fn.now());
+
+    table
+      .timestamp("updated_at", { useTz: true })
+      .notNullable()
+      .defaultTo(knex.fn.now());
 
     table.index(["registration_id", "created_at"]);
-    table.index(["registration_id", "status"]);
+    table.index(["status"]);
   });
 }
 

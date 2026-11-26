@@ -20,21 +20,6 @@ export type EventAppearance = {
   logo: string;
 };
 
-export type CreateEventData = {
-  info: {
-    name: string;
-    description?: string;
-    location?: string;
-    price: number | null;
-    startDate?: string;
-    endDate?: string;
-  };
-  registration: {
-    fields: RegistrationField[];
-  };
-  appearance: EventAppearance;
-};
-
 export interface EventRecord {
   id: string;
   user_id: string;
@@ -43,7 +28,6 @@ export interface EventRecord {
   location: string | null;
   start_date: string | null;
   end_date: string | null;
-  price: string | null;
   registration_count: number;
   registration_fields: RegistrationField[];
   appearance: EventAppearance;

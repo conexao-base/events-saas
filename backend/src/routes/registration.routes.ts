@@ -2,43 +2,26 @@ import { Router } from "express";
 import { RegistrationController } from "../controllers/registration.controller.js";
 import { requireAuth } from "../middlwares/auth.middleware.js";
 
-const registrationRoutes = Router();
+const routes = Router();
 
-// Inscrição pública
-registrationRoutes.post("/:eventId", RegistrationController.create);
-
-// Gerenciamento de inscrições
-registrationRoutes.post(
+routes.post("/:eventId", RegistrationController.create);
+routes.post(
   "/admin/:eventId",
   requireAuth,
   RegistrationController.createByAdmin,
 );
-
-registrationRoutes.get(
+routes.get(
   "/event/:eventId",
   requireAuth,
   RegistrationController.findAllByEvent,
 );
-
-// Listagem de todas as inscrições
-registrationRoutes.get("/", requireAuth, RegistrationController.findAll);
-
-registrationRoutes.put(
-  "/:registrationId",
-  requireAuth,
-  RegistrationController.update,
-);
-
-registrationRoutes.patch(
+routes.get("/", requireAuth, RegistrationController.findAll);
+routes.put("/:registrationId", requireAuth, RegistrationController.update);
+routes.patch(
   "/:registrationId/status",
   requireAuth,
   RegistrationController.updateStatus,
 );
+routes.delete("/:registrationId", requireAuth, RegistrationController.delete);
 
-registrationRoutes.delete(
-  "/:registrationId",
-  requireAuth,
-  RegistrationController.delete,
-);
-
-export { registrationRoutes };
+export { routes as registrationRoutes };

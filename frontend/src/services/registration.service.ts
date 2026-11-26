@@ -3,6 +3,15 @@ import { publicApi } from '@/lib/public-api'
 
 export type RegistrationStatus = 'pending' | 'confirmed' | 'cancelled'
 
+export type CreatePublicRegistrationInput = {
+  data: CreateRegistrationData
+  lotId?: string
+  payment: {
+    billingType: 'PIX' | 'BOLETO' | 'CREDIT_CARD'
+    installmentCount: number
+  }
+}
+
 export type CreateRegistrationData = Record<
   string,
   string | number | boolean | null
@@ -19,7 +28,7 @@ export interface ApiRegistration {
   event_id: string
   event_name?: string
   data: CreateRegistrationData
-  price: string
+  payment_amount: string | number | null
   status: RegistrationStatus
   created_at: string
   updated_at: string
@@ -37,11 +46,11 @@ export const registrationService = {
   // Inscrição pública
   async create(
     eventId: string,
-    data: CreateRegistrationData
+    input: CreatePublicRegistrationInput
   ): Promise<ApiRegistration> {
     const { data: response } = await publicApi.post<RegistrationResponse>(
       `/registrations/${eventId}`,
-      { data }
+      input
     )
 
     return response.registration

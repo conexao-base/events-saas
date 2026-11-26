@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -7,12 +8,16 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { completeStep } from '@/features/events/event-builder/event-form-steps'
+import {
+  completeStep,
+  resetSteps,
+} from '@/features/events/event-builder/event-form-steps'
 import { useEventFormValidation } from '@/features/events/event-builder/event-form-validation-provider'
 import { InfoBasicForm } from '@/features/events/event-builder/info/components/info-basic-form'
 import { InfoHeader } from '@/features/events/event-builder/info/components/info-header'
 import { useInfo } from '@/features/events/event-builder/info/components/info-provider'
 import { useInfoForm } from '@/features/events/hooks/use-info-form'
+import { clearEventFormDraft } from '../event-form-storage'
 
 type InfoProps = {
   eventId?: string
@@ -23,6 +28,17 @@ function InfoContent({ eventId }: InfoProps) {
   const { isLoading } = useInfoForm(eventId)
   const { formData } = useInfo()
   const { validateInfo } = useEventFormValidation()
+
+  const initialized = useRef(false)
+
+  useEffect(() => {
+    if (eventId || initialized.current) return
+
+    initialized.current = true
+
+    resetSteps()
+    clearEventFormDraft()
+  }, [eventId])
 
   function handleNext() {
     if (!validateInfo(formData)) return

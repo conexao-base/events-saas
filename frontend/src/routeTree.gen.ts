@@ -37,6 +37,7 @@ import { Route as AuthenticatedEventsEventIdRegistrationRouteImport } from './ro
 import { Route as AuthenticatedEventsNewInfoRouteImport } from './routes/_authenticated/events/new/info'
 import { Route as AuthenticatedEventsNewPreviewRouteImport } from './routes/_authenticated/events/new/preview'
 import { Route as AuthenticatedEventsNewRegistrationRouteImport } from './routes/_authenticated/events/new/registration'
+import { Route as AuthenticatedEventsEventIdPaymentsIndexRouteImport } from './routes/_authenticated/events/$eventId/payments/index'
 import { Route as AuthenticatedEventsEventIdRegistrationsIndexRouteImport } from './routes/_authenticated/events/$eventId/registrations/index'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -192,6 +193,12 @@ const AuthenticatedEventsNewRegistrationRoute =
     path: '/registration',
     getParentRoute: () => AuthenticatedEventsNewRouteRoute,
   } as any)
+const AuthenticatedEventsEventIdPaymentsIndexRoute =
+  AuthenticatedEventsEventIdPaymentsIndexRouteImport.update({
+    id: '/payments/',
+    path: '/payments/',
+    getParentRoute: () => AuthenticatedEventsEventIdRouteRoute,
+  } as any)
 const AuthenticatedEventsEventIdRegistrationsIndexRoute =
   AuthenticatedEventsEventIdRegistrationsIndexRouteImport.update({
     id: '/registrations/',
@@ -226,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/events/new/info': typeof AuthenticatedEventsNewInfoRoute
   '/events/new/preview': typeof AuthenticatedEventsNewPreviewRoute
   '/events/new/registration': typeof AuthenticatedEventsNewRegistrationRoute
+  '/events/$eventId/payments/': typeof AuthenticatedEventsEventIdPaymentsIndexRoute
   '/events/$eventId/registrations/': typeof AuthenticatedEventsEventIdRegistrationsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -254,6 +262,7 @@ export interface FileRoutesByTo {
   '/events/new/info': typeof AuthenticatedEventsNewInfoRoute
   '/events/new/preview': typeof AuthenticatedEventsNewPreviewRoute
   '/events/new/registration': typeof AuthenticatedEventsNewRegistrationRoute
+  '/events/$eventId/payments': typeof AuthenticatedEventsEventIdPaymentsIndexRoute
   '/events/$eventId/registrations': typeof AuthenticatedEventsEventIdRegistrationsIndexRoute
 }
 export interface FileRoutesById {
@@ -286,6 +295,7 @@ export interface FileRoutesById {
   '/_authenticated/events/new/info': typeof AuthenticatedEventsNewInfoRoute
   '/_authenticated/events/new/preview': typeof AuthenticatedEventsNewPreviewRoute
   '/_authenticated/events/new/registration': typeof AuthenticatedEventsNewRegistrationRoute
+  '/_authenticated/events/$eventId/payments/': typeof AuthenticatedEventsEventIdPaymentsIndexRoute
   '/_authenticated/events/$eventId/registrations/': typeof AuthenticatedEventsEventIdRegistrationsIndexRoute
 }
 export interface FileRouteTypes {
@@ -317,6 +327,7 @@ export interface FileRouteTypes {
     | '/events/new/info'
     | '/events/new/preview'
     | '/events/new/registration'
+    | '/events/$eventId/payments/'
     | '/events/$eventId/registrations/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -345,6 +356,7 @@ export interface FileRouteTypes {
     | '/events/new/info'
     | '/events/new/preview'
     | '/events/new/registration'
+    | '/events/$eventId/payments'
     | '/events/$eventId/registrations'
   id:
     | '__root__'
@@ -376,6 +388,7 @@ export interface FileRouteTypes {
     | '/_authenticated/events/new/info'
     | '/_authenticated/events/new/preview'
     | '/_authenticated/events/new/registration'
+    | '/_authenticated/events/$eventId/payments/'
     | '/_authenticated/events/$eventId/registrations/'
   fileRoutesById: FileRoutesById
 }
@@ -590,6 +603,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEventsNewRegistrationRouteImport
       parentRoute: typeof AuthenticatedEventsNewRouteRoute
     }
+    '/_authenticated/events/$eventId/payments/': {
+      id: '/_authenticated/events/$eventId/payments/'
+      path: '/payments'
+      fullPath: '/events/$eventId/payments/'
+      preLoaderRoute: typeof AuthenticatedEventsEventIdPaymentsIndexRouteImport
+      parentRoute: typeof AuthenticatedEventsEventIdRouteRoute
+    }
     '/_authenticated/events/$eventId/registrations/': {
       id: '/_authenticated/events/$eventId/registrations/'
       path: '/registrations'
@@ -623,6 +643,7 @@ interface AuthenticatedEventsEventIdRouteRouteChildren {
   AuthenticatedEventsEventIdInfoRoute: typeof AuthenticatedEventsEventIdInfoRoute
   AuthenticatedEventsEventIdPreviewRoute: typeof AuthenticatedEventsEventIdPreviewRoute
   AuthenticatedEventsEventIdRegistrationRoute: typeof AuthenticatedEventsEventIdRegistrationRoute
+  AuthenticatedEventsEventIdPaymentsIndexRoute: typeof AuthenticatedEventsEventIdPaymentsIndexRoute
   AuthenticatedEventsEventIdRegistrationsIndexRoute: typeof AuthenticatedEventsEventIdRegistrationsIndexRoute
 }
 
@@ -633,6 +654,8 @@ const AuthenticatedEventsEventIdRouteRouteChildren: AuthenticatedEventsEventIdRo
       AuthenticatedEventsEventIdPreviewRoute,
     AuthenticatedEventsEventIdRegistrationRoute:
       AuthenticatedEventsEventIdRegistrationRoute,
+    AuthenticatedEventsEventIdPaymentsIndexRoute:
+      AuthenticatedEventsEventIdPaymentsIndexRoute,
     AuthenticatedEventsEventIdRegistrationsIndexRoute:
       AuthenticatedEventsEventIdRegistrationsIndexRoute,
   }

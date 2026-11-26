@@ -1,6 +1,6 @@
+import type { InfoFormData } from './info/components/info-provider'
 import type { PreviewAppearance } from './preview/types/preview'
 import type { RegistrationField } from './registration/types/registration'
-import type { InfoFormData } from './info/components/info-provider'
 
 export interface EventFormDraft {
   info: InfoFormData
@@ -12,7 +12,7 @@ const STORAGE_KEY = 'conexao:event-form-draft'
 
 export function getEventFormDraft(): Partial<EventFormDraft> {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY)
+    const stored = sessionStorage.getItem(STORAGE_KEY)
 
     return stored ? JSON.parse(stored) : {}
   } catch {
@@ -23,7 +23,7 @@ export function getEventFormDraft(): Partial<EventFormDraft> {
 export function updateEventFormDraft(data: Partial<EventFormDraft>) {
   const currentDraft = getEventFormDraft()
 
-  localStorage.setItem(
+  sessionStorage.setItem(
     STORAGE_KEY,
     JSON.stringify({
       ...currentDraft,
@@ -33,5 +33,5 @@ export function updateEventFormDraft(data: Partial<EventFormDraft>) {
 }
 
 export function clearEventFormDraft() {
-  localStorage.removeItem(STORAGE_KEY)
+  sessionStorage.removeItem(STORAGE_KEY)
 }

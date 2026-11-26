@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import type { RegistrationFieldDTO } from '@/services/event.service'
 import {
   type ApiRegistration,
   type RegistrationStatus,
@@ -7,7 +6,6 @@ import {
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { LongText } from '@/components/long-text'
 import { DataTableRowActions } from './data-table-row-actions'
 
 const statusLabels: Record<RegistrationStatus, string> = {
@@ -20,46 +18,6 @@ const statusColors: Record<RegistrationStatus, string> = {
   pending: 'border-yellow-500/50 text-yellow-600',
   confirmed: 'border-green-500/50 text-green-600',
   cancelled: 'border-red-500/50 text-red-600',
-}
-
-function formatDate(value: unknown): string {
-  if (!value) return '-'
-
-  const dateString = String(value)
-
-  // Evita conversão de fuso horário em datas sem horário.
-  const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})$/)
-
-  if (match) {
-    const [, year, month, day] = match
-    return `${day}/${month}/${year}`
-  }
-
-  const date = new Date(dateString)
-
-  if (Number.isNaN(date.getTime())) return '-'
-
-  return date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
-}
-
-function formatValue(value: unknown, type?: string): string {
-  if (value === null || value === undefined || value === '') {
-    return '-'
-  }
-
-  if (type === 'date') {
-    return formatDate(value)
-  }
-
-  if (typeof value === 'boolean') {
-    return value ? 'Sim' : 'Não'
-  }
-
-  return String(value)
 }
 
 function formatPrice(price: string | number | null | undefined): string {
@@ -79,36 +37,7 @@ function formatPrice(price: string | number | null | undefined): string {
   })
 }
 
-export function createRegistrationsColumns(
-  fields: RegistrationFieldDTO[]
-): ColumnDef<ApiRegistration>[] {
-  const registrationFields: ColumnDef<ApiRegistration>[] = fields.map(
-    (field, index) => ({
-      id: field.id,
-      accessorFn: (row) => row.data[field.id],
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={field.label} />
-      ),
-      cell: ({ row }) => (
-        <div className='flex justify-center'>
-          <LongText className='max-w-40 text-center'>
-            {formatValue(row.original.data[field.id], field.type)}
-          </LongText>
-        </div>
-      ),
-      meta:
-        index === 0
-          ? {
-              className:
-                'sticky left-0 z-20 min-w-40 bg-background text-center shadow-[2px_0_5px_-2px_rgba(0,0,0,0.15)]',
-              thClassName:
-                'sticky left-0 z-30 min-w-40 bg-background text-center',
-            }
-          : undefined,
-      enableSorting: true,
-    })
-  )
-
+export function createRegistrationsColumns(): ColumnDef<ApiRegistration>[] {
   return [
     {
       id: 'index',
@@ -128,15 +57,66 @@ export function createRegistrationsColumns(
       enableSorting: false,
       enableHiding: false,
     },
-    ...registrationFields,
     {
-      accessorKey: 'price',
+      id: 'name',
+      accessorFn: (row) => row.data['full-name'],
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='Nome' />
+      ),
+      cell: ({ row }) => (
+        <span className='whitespace-nowrap'>
+          {row.original.data['full-name'] || '-'}
+        </span>
+      ),
+      meta: {
+        className:
+          'sticky left-0 z-20 min-w-40 bg-background shadow-[2px_0_5px_-2px_rgba(0,0,0,0.15)]',
+        thClassName: 'sticky left-0 z-30 min-w-40 bg-background',
+      },
+      enableSorting: true,
+    },
+    {
+      id: 'cpf',
+      accessorFn: (row) => row.data.cpf,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='CPF' />
+      ),
+      cell: ({ row }) => (
+        <span className='whitespace-nowrap'>
+          {row.original.data.cpf || '-'}
+        </span>
+      ),
+      meta: {
+        className: 'min-w-36',
+        thClassName: 'min-w-36',
+      },
+      enableSorting: true,
+    },
+    {
+      id: 'email',
+      accessorFn: (row) => row.data.email,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='E-mail' />
+      ),
+      cell: ({ row }) => (
+        <span className='whitespace-nowrap'>
+          {row.original.data.email || '-'}
+        </span>
+      ),
+      meta: {
+        className: 'min-w-52',
+        thClassName: 'min-w-52',
+      },
+      enableSorting: true,
+    },
+    {
+      accessorKey: 'payment_amount',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title='Valor' />
       ),
       cell: ({ row }) => (
         <span className='whitespace-nowrap'>
-          {formatPrice(row.original.price)}
+          {formatPrice(row.original.payment_amount)}
         </span>
       ),
       meta: {

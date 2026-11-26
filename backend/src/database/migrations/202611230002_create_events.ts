@@ -3,25 +3,18 @@ import type { Knex } from "knex";
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("events", (table) => {
     table.uuid("id").primary().defaultTo(knex.raw("gen_random_uuid()"));
-
     table
       .uuid("user_id")
       .notNullable()
       .references("id")
       .inTable("users")
       .onDelete("CASCADE");
-
     table.string("name", 120).notNullable();
     table.text("description").nullable();
     table.string("location", 255).nullable();
-
     table.date("start_date").nullable();
     table.date("end_date").nullable();
-
-    table.decimal("price", 10, 2).nullable();
-
     table.jsonb("registration_fields").notNullable().defaultTo("[]");
-
     table
       .jsonb("appearance")
       .notNullable()
@@ -32,19 +25,18 @@ export async function up(knex: Knex): Promise<void> {
           logo: "",
         }),
       );
-
-    table.string("status", 20).notNullable().defaultTo("draft");
-
+    table
+      .enu("status", ["draft", "published"])
+      .notNullable()
+      .defaultTo("draft");
     table
       .timestamp("created_at", { useTz: true })
       .notNullable()
       .defaultTo(knex.fn.now());
-
     table
       .timestamp("updated_at", { useTz: true })
       .notNullable()
       .defaultTo(knex.fn.now());
-
     table.index(["user_id", "created_at"]);
     table.index(["user_id", "status"]);
   });
