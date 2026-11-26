@@ -19,7 +19,7 @@ export type PublicEvent = {
     coverImage: string
     primaryColor: string
   }
-  status: 'draft' | 'published'
+  status: 'draft' | 'published' | 'ended'
 }
 
 export type CreateRegistrationDTO = {

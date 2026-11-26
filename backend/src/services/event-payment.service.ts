@@ -182,20 +182,27 @@ export class EventPaymentService {
       };
     }
 
-    const date = new Date().toISOString().slice(0, 10);
-
     const lots = await db("event_payment_lots")
       .where({
         event_id: eventId,
         active: true,
       })
-      .where("start_date", "<=", date)
-      .where("end_date", ">=", date)
-      .orderBy("position");
+      .orderBy("position")
+      .orderBy("start_date");
 
     return {
       enabled: true,
-      lots,
+      lots: lots.map((lot) => ({
+        id: lot.id,
+        name: lot.name,
+        value: Number(lot.value),
+        startDate: lot.start_date,
+        endDate: lot.end_date,
+        active: lot.active,
+        billingTypes: lot.billing_types,
+        maxInstallments: lot.max_installments,
+        position: lot.position,
+      })),
     };
   }
 

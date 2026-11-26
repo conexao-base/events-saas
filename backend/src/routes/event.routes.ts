@@ -1,19 +1,14 @@
 import { Router } from "express";
 import { EventController } from "../controllers/event.controller.js";
 import { requireAuth } from "../middlwares/auth.middleware.js";
-import eventPaymentRoutes from "./event-payment.routes.js";
 
 const eventRoutes = Router();
 
-eventRoutes.use(requireAuth);
-
-eventRoutes.post("/", EventController.create);
-eventRoutes.get("/", EventController.index);
-eventRoutes.patch("/:id/status", EventController.updateStatus);
-eventRoutes.get("/:id", EventController.show);
-eventRoutes.put("/:id", EventController.update);
-eventRoutes.delete("/:id", EventController.remove);
-
-eventRoutes.use("/", eventPaymentRoutes);
+eventRoutes.post("/", requireAuth, EventController.create);
+eventRoutes.get("/", requireAuth, EventController.index);
+eventRoutes.patch("/:id/status", requireAuth, EventController.updateStatus);
+eventRoutes.get("/:id", requireAuth, EventController.show);
+eventRoutes.put("/:id", requireAuth, EventController.update);
+eventRoutes.delete("/:id", requireAuth, EventController.remove);
 
 export { eventRoutes };

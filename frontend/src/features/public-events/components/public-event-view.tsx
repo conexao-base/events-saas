@@ -1,16 +1,19 @@
 import type { CSSProperties } from 'react'
+import { PublicPaymentOptions } from '@/services/event-payment.service'
 import type { ApiEvent } from '@/services/event.service'
 import { CalendarDays, MapPin, Tag } from 'lucide-react'
 import { formatDate } from '@/utils/formatDate'
+import { EventPaymentInfo } from './event-payment-info'
 import { RegistrationForm } from './registration-form'
 
 type PublicEventViewProps = {
   event: ApiEvent
+  payment: PublicPaymentOptions
   isAuthenticated: boolean
 }
-
 export function PublicEventView({
   event,
+  payment,
   isAuthenticated,
 }: PublicEventViewProps) {
   const primaryColor = event.appearance.primaryColor
@@ -85,15 +88,23 @@ export function PublicEventView({
             </div>
           </header>
 
-          {event.description && (
+          {(event.description || payment.lots.length > 0) && (
             <section className='border-b px-6 py-6 sm:px-10 sm:py-5'>
               <h2 className='text-xl font-semibold tracking-tight'>
                 Informações Gerais
               </h2>
 
-              <p className='mt-3 text-sm leading-7 whitespace-pre-wrap text-muted-foreground'>
-                {event.description}
-              </p>
+              {event.description && (
+                <p className='mt-3 text-sm leading-7 whitespace-pre-wrap text-muted-foreground'>
+                  {event.description}
+                </p>
+              )}
+
+              <EventPaymentInfo
+                enabled={payment.enabled}
+                lots={payment.lots}
+                primaryColor={primaryColor}
+              />
             </section>
           )}
 
