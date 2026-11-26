@@ -1,4 +1,3 @@
-import { formatCurrency } from '@/utils/formatCurrency'
 import { parseDateInput } from '@/utils/parseDateInput'
 import { FieldError } from '@/components/ui/field-error'
 import { Input } from '@/components/ui/input'
@@ -21,26 +20,40 @@ export function InfoBasicForm() {
     clearError(`info.${field}`)
   }
 
-  function updatePrice(value: string) {
-    updateField('price', formatCurrency(value))
-  }
-
   return (
     <div className='space-y-5'>
-      <div className='space-y-2'>
-        <Label htmlFor='name'>
-          Nome do evento <span className='text-destructive'>*</span>
-        </Label>
+      <div className='grid grid-cols-1 gap-5 sm:grid-cols-2'>
+        <div className='space-y-2'>
+          <Label htmlFor='name'>
+            Nome do evento <span className='text-destructive'>*</span>
+          </Label>
 
-        <Input
-          id='name'
-          value={formData.name}
-          onChange={(event) => updateField('name', event.target.value)}
-          aria-invalid={!!errors['info.name']}
-          required
-        />
+          <Input
+            id='name'
+            value={formData.name}
+            onChange={(event) => updateField('name', event.target.value)}
+            aria-invalid={!!errors['info.name']}
+            required
+          />
 
-        <FieldError error={errors['info.name']} />
+          <FieldError error={errors['info.name']} />
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='location'>
+            Local do evento <span className='text-destructive'>*</span>
+          </Label>
+
+          <Input
+            id='location'
+            value={formData.location}
+            onChange={(event) => updateField('location', event.target.value)}
+            aria-invalid={!!errors['info.location']}
+            required
+          />
+
+          <FieldError error={errors['info.location']} />
+        </div>
       </div>
 
       <div className='grid gap-4 sm:grid-cols-2'>
@@ -67,44 +80,6 @@ export function InfoBasicForm() {
           />
 
           <FieldError error={errors['info.endDate']} />
-        </div>
-      </div>
-
-      <div className='grid gap-4 sm:grid-cols-2'>
-        <div className='space-y-2'>
-          <Label htmlFor='location'>
-            Local do evento <span className='text-destructive'>*</span>
-          </Label>
-
-          <Input
-            id='location'
-            value={formData.location}
-            onChange={(event) => updateField('location', event.target.value)}
-            aria-invalid={!!errors['info.location']}
-            required
-          />
-
-          <FieldError error={errors['info.location']} />
-        </div>
-
-        <div className='space-y-2'>
-          <Label htmlFor='price'>
-            Valor (R$) <span className='text-destructive'>*</span>
-          </Label>
-
-          <Input
-            id='price'
-            type='text'
-            inputMode='numeric'
-            value={formatCurrency(formData.price)}
-            onChange={(event) => updatePrice(event.target.value)}
-            placeholder='R$ 0,00'
-            className='tabular-nums'
-            aria-invalid={!!errors['info.price']}
-            required
-          />
-
-          <FieldError error={errors['info.price']} />
         </div>
       </div>
 

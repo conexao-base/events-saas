@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { EventController } from "../controllers/event.controller.js";
 import { requireAuth } from "../middlwares/auth.middleware.js";
+import eventPaymentRoutes from "./event-payment.routes.js";
 
 const eventRoutes = Router();
 
@@ -12,5 +13,7 @@ eventRoutes.patch("/:id/status", EventController.updateStatus);
 eventRoutes.get("/:id", EventController.show);
 eventRoutes.put("/:id", EventController.update);
 eventRoutes.delete("/:id", EventController.remove);
+
+eventRoutes.use("/", eventPaymentRoutes);
 
 export { eventRoutes };

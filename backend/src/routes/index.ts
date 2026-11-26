@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { authRoutes } from "./auth.routes.js";
 import { asaasWebhookRoutes } from "./asaas-webhook.routes.js";
+import { authRoutes } from "./auth.routes.js";
 import { eventRoutes } from "./event.routes.js";
 import { ibgeRoutes } from "./ibge.routes.js";
 import { publicEventRoutes } from "./public-event.js";

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const registrationFieldSchema = z
+const registrationFieldSchema = z
   .object({
     id: z.string().trim().min(1).max(100),
     label: z.string().trim().min(1).max(120),
@@ -8,12 +8,12 @@ export const registrationFieldSchema = z
     required: z.boolean(),
     options: z.array(z.string().trim().min(1).max(100)).max(100).optional(),
   })
-  .superRefine((field, context) => {
+  .superRefine((field, ctx) => {
     if (field.type === "select" && !field.options?.length) {
-      context.addIssue({
+      ctx.addIssue({
         code: "custom",
         path: ["options"],
-        message: "Campos de seleção precisam ter pelo menos uma opção.",
+        message: "Campos de seleção precisam de opções.",
       });
     }
   });
@@ -24,64 +24,56 @@ export const eventSchema = z
       name: z.string().trim().min(2).max(120),
       description: z.string().trim().max(10000).optional().default(""),
       location: z.string().trim().max(255).optional().default(""),
-      startDate: z.iso.date().optional().or(z.literal("")),
-      endDate: z.iso.date().optional().or(z.literal("")),
-      price: z.string().default(""),
+      startDate: z.iso.date().or(z.literal("")).optional(),
+      endDate: z.iso.date().or(z.literal("")).optional(),
     }),
-
     registration: z.object({
       fields: z.array(registrationFieldSchema).max(100),
     }),
-
     appearance: z.object({
       primaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/),
       coverImage: z.union([z.url(), z.literal("")]).default(""),
       logo: z.union([z.url(), z.literal("")]).default(""),
     }),
   })
-  .superRefine((data, context) => {
-    const { startDate, endDate } = data.info;
-
-    if (startDate && endDate && startDate > endDate) {
-      context.addIssue({
+  .superRefine((data, ctx) => {
+    if (
+      data.info.startDate &&
+      data.info.endDate &&
+      data.info.startDate > data.info.endDate
+    ) {
+      ctx.addIssue({
         code: "custom",
         path: ["info", "endDate"],
-        message: "A data final não pode ser anterior à data inicial.",
+        message: "A data final não pode ser anterior à inicial.",
       });
     }
-
     const ids = data.registration.fields.map((field) => field.id);
-
     if (new Set(ids).size !== ids.length) {
-      context.addIssue({
+      ctx.addIssue({
         code: "custom",
         path: ["registration", "fields"],
         message: "Os identificadores dos campos devem ser únicos.",
       });
     }
-
-    // Campos padrão obrigatórios
-    const requiredFields = [
+    for (const required of [
       { type: "text", label: "Nome completo" },
       { type: "email", label: "E-mail" },
       { type: "phone", label: "Telefone" },
       { type: "cpf", label: "CPF" },
       { type: "date", label: "Data de nascimento" },
       { type: "city", label: "Cidade" },
-    ] as const;
-
-    for (const requiredField of requiredFields) {
+    ]) {
       const field = data.registration.fields.find(
         (item) =>
-          item.type === requiredField.type &&
-          item.label.trim().toLowerCase() === requiredField.label.toLowerCase(),
+          item.type === required.type &&
+          item.label.toLowerCase() === required.label.toLowerCase(),
       );
-
       if (!field || !field.required) {
-        context.addIssue({
+        ctx.addIssue({
           code: "custom",
           path: ["registration", "fields"],
-          message: `O campo "${requiredField.label}" deve existir e ser obrigatório.`,
+          message: `O campo "${required.label}" deve existir e ser obrigatório.`,
         });
       }
     }
@@ -90,5 +82,4 @@ export const eventSchema = z
 export const updateEventStatusSchema = z.object({
   status: z.enum(["draft", "published"]),
 });
-
 export type EventInput = z.infer<typeof eventSchema>;

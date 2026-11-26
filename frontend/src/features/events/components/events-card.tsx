@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import type { ApiEvent } from '@/services/event.service'
-import { ExternalLink, Info, Trash2, Users } from 'lucide-react'
+import { ExternalLink, Info, Trash2, Users, Wrench } from 'lucide-react'
 import { formatDate } from '@/utils/formatDate'
 import { EventStatus } from './event-status'
 
@@ -49,7 +49,7 @@ export function EventsCard({ event, onClick, onDelete }: EventsCardProps) {
               target='_blank'
               aria-label='Visualizar página pública do evento'
               title='Visualizar página pública'
-              className='flex items-center justify-center rounded-lg border-0 bg-transparent text-muted-foreground shadow-none transition-colors hover:bg-transparent'
+              className='flex items-center justify-center rounded-lg border-0 bg-transparent text-muted-foreground shadow-none transition-colors hover:bg-transparent hover:text-foreground'
             >
               <ExternalLink size={22} />
             </Link>
@@ -59,10 +59,20 @@ export function EventsCard({ event, onClick, onDelete }: EventsCardProps) {
               onClick={onClick}
               aria-label='Configurações gerais do evento'
               title='Configurações gerais'
-              className='flex items-center justify-center rounded-lg border-0 bg-transparent text-muted-foreground shadow-none transition-colors hover:bg-transparent'
+              className='flex items-center justify-center rounded-lg border-0 bg-transparent text-muted-foreground shadow-none transition-colors hover:bg-transparent hover:text-foreground'
             >
               <Info size={22} />
             </button>
+
+            <Link
+              to='/events/$eventId/payments'
+              params={{ eventId: event.id }}
+              aria-label='Administrar pagamentos do evento'
+              title='Administrar pagamentos'
+              className='flex items-center justify-center rounded-lg border-0 bg-transparent text-muted-foreground shadow-none transition-colors hover:bg-transparent hover:text-foreground'
+            >
+              <Wrench size={22} />
+            </Link>
           </div>
         </div>
 

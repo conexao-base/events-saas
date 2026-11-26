@@ -1,222 +1,127 @@
 import type { NextFunction, Request, Response } from "express";
+import { publicRegistrationSchema } from "../schemas/registration.schema.js";
+import { RegistrationService } from "../services/registration.service.js";
 
-import {
-  RegistrationService,
-  RegistrationServiceError,
-} from "../models/registration.model.js";
-import type {
-  RegistrationData,
-  RegistrationStatus,
-} from "../types/registration.types.js";
+const statuses = ["pending", "confirmed", "cancelled"] as const;
+type Status = (typeof statuses)[number];
 
 export const RegistrationController = {
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const { eventId } = req.params;
-      const { data } = req.body as { data: RegistrationData };
-
-      const registration = await RegistrationService.create(eventId, data);
-
-      res.status(201).json({ registration });
+      const parsed = publicRegistrationSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          message: "Dados da inscrição inválidos.",
+          errors: parsed.error.flatten(),
+        });
+        return;
+      }
+      const result = await RegistrationService.createPublic(
+        req.params.eventId!,
+        parsed.data,
+      );
+      res.status(201).json(result);
     } catch (error) {
       next(error);
     }
   },
-
   async createByAdmin(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!req.auth) {
-        res.status(401).json({ message: "Não autenticado." });
+      const { data, status = "pending" } = req.body as {
+        data: Record<string, string | number | boolean | null>;
+        status?: Status;
+      };
+      if (
+        !data ||
+        typeof data !== "object" ||
+        Array.isArray(data) ||
+        !statuses.includes(status)
+      ) {
+        res.status(400).json({ message: "Dados da inscrição inválidos." });
         return;
       }
-
-      const { eventId } = req.params;
-      const { data, price, status } = req.body as {
-        data: RegistrationData;
-        price?: string;
-        status: RegistrationStatus;
-      };
-
-      if (!data || typeof data !== "object" || Array.isArray(data)) {
-        throw new RegistrationServiceError(
-          "Dados da inscrição inválidos.",
-          400,
-        );
-      }
-
-      if (
-        price !== undefined &&
-        (typeof price !== "string" ||
-          !/^\d+(\.\d{1,2})?$/.test(price) ||
-          Number(price) < 0)
-      ) {
-        throw new RegistrationServiceError("Valor da inscrição inválido.", 400);
-      }
-
-      const allowedStatuses: RegistrationStatus[] = [
-        "pending",
-        "confirmed",
-        "cancelled",
-      ];
-
-      if (!allowedStatuses.includes(status)) {
-        throw new RegistrationServiceError(
-          "Status de inscrição inválido.",
-          400,
-        );
-      }
-
       const registration = await RegistrationService.createByAdmin(
-        eventId,
-        req.auth.userId,
+        req.params.eventId!,
+        req.auth!.userId,
         data,
-        price,
         status,
       );
-
       res.status(201).json({ registration });
     } catch (error) {
       next(error);
     }
   },
-
   async findAllByEvent(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!req.auth) {
-        res.status(401).json({ message: "Não autenticado." });
-        return;
-      }
-
-      const { eventId } = req.params;
-
-      const registrations = await RegistrationService.findAllByEvent(
-        eventId,
-        req.auth.userId,
-      );
-
-      res.status(200).json({ registrations });
+      res.json({
+        registrations: await RegistrationService.findAllByEvent(
+          req.params.eventId!,
+          req.auth!.userId,
+        ),
+      });
     } catch (error) {
       next(error);
     }
   },
-
   async findAll(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!req.auth) {
-        res.status(401).json({ message: "Não autenticado." });
-        return;
-      }
-
-      const registrations = await RegistrationService.findAll(req.auth.userId);
-
-      res.status(200).json({ registrations });
+      res.json({
+        registrations: await RegistrationService.findAll(req.auth!.userId),
+      });
     } catch (error) {
       next(error);
     }
   },
-
-  async updateStatus(req: Request, res: Response, next: NextFunction) {
-    try {
-      if (!req.auth) {
-        res.status(401).json({ message: "Não autenticado." });
-        return;
-      }
-
-      const { registrationId } = req.params;
-      const { status } = req.body as { status: RegistrationStatus };
-
-      const allowedStatuses: RegistrationStatus[] = [
-        "pending",
-        "confirmed",
-        "cancelled",
-      ];
-
-      if (!allowedStatuses.includes(status)) {
-        throw new RegistrationServiceError(
-          "Status de inscrição inválido.",
-          400,
-        );
-      }
-
-      const registration = await RegistrationService.updateStatus(
-        registrationId,
-        req.auth.userId,
-        status,
-      );
-
-      res.status(200).json({ registration });
-    } catch (error) {
-      next(error);
-    }
-  },
-
   async update(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!req.auth) {
-        res.status(401).json({ message: "Não autenticado." });
+      const body = req.body as {
+        data?: Record<string, string | number | boolean | null>;
+        status?: Status;
+      };
+      if (
+        !body.data ||
+        typeof body.data !== "object" ||
+        Array.isArray(body.data) ||
+        !body.status ||
+        !statuses.includes(body.status)
+      ) {
+        res.status(400).json({ message: "Dados da inscrição inválidos." });
         return;
       }
-
-      const { registrationId } = req.params;
-      const { data, price, status } = req.body as {
-        data: RegistrationData;
-        price: string;
-        status: RegistrationStatus;
-      };
-
-      const allowedStatuses: RegistrationStatus[] = [
-        "pending",
-        "confirmed",
-        "cancelled",
-      ];
-
-      if (!data || typeof data !== "object" || Array.isArray(data)) {
-        throw new RegistrationServiceError(
-          "Dados da inscrição inválidos.",
-          400,
-        );
-      }
-
-      if (
-        typeof price !== "string" ||
-        !/^\d+(\.\d{1,2})?$/.test(price) ||
-        Number(price) < 0
-      ) {
-        throw new RegistrationServiceError("Valor da inscrição inválido.", 400);
-      }
-
-      if (!allowedStatuses.includes(status)) {
-        throw new RegistrationServiceError(
-          "Status de inscrição inválido.",
-          400,
-        );
-      }
-
       const registration = await RegistrationService.update(
-        registrationId,
-        req.auth.userId,
-        data,
-        price,
-        status,
+        req.params.registrationId!,
+        req.auth!.userId,
+        body.data,
+        body.status,
       );
-
-      res.status(200).json({ registration });
+      res.json({ registration });
     } catch (error) {
       next(error);
     }
   },
-
-  async delete(req: Request, res: Response, next: NextFunction) {
+  async updateStatus(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!req.auth) {
-        res.status(401).json({ message: "Não autenticado." });
+      const status = (req.body as { status?: Status }).status;
+      if (!status || !statuses.includes(status)) {
+        res.status(400).json({ message: "Status inválido." });
         return;
       }
-
-      const { registrationId } = req.params;
-
-      await RegistrationService.delete(registrationId, req.auth.userId);
-
+      const registration = await RegistrationService.updateStatus(
+        req.params.registrationId!,
+        req.auth!.userId,
+        status,
+      );
+      res.json({ registration });
+    } catch (error) {
+      next(error);
+    }
+  },
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      await RegistrationService.delete(
+        req.params.registrationId!,
+        req.auth!.userId,
+      );
       res.status(204).send();
     } catch (error) {
       next(error);

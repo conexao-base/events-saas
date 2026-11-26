@@ -5,7 +5,7 @@ const STORAGE_KEY = 'event-form-steps'
 
 function getCompletedSteps(): EventStep[] {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY)
+    const stored = sessionStorage.getItem(STORAGE_KEY)
     return stored ? JSON.parse(stored) : []
   } catch {
     return []
@@ -15,7 +15,7 @@ function getCompletedSteps(): EventStep[] {
 let completedSteps: EventStep[] = getCompletedSteps()
 
 function persistSteps() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(completedSteps))
+  sessionStorage.setItem(STORAGE_KEY, JSON.stringify(completedSteps))
 }
 
 export function completeStep(step: EventStep) {
@@ -47,5 +47,5 @@ export function getFirstPendingStep(): RouteStep {
 
 export function resetSteps() {
   completedSteps = []
-  localStorage.removeItem(STORAGE_KEY)
+  sessionStorage.removeItem(STORAGE_KEY)
 }

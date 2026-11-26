@@ -1,24 +1,9 @@
-import type { EventInput } from "../../../shared/schemas/event.schema.js";
 import { db } from "../config/database.js";
-import type { EventRecord } from "../types/event.types.js";
-import { parsePrice } from "../utils/pase-price.js";
-
-function eventQuery() {
-  return db<EventRecord>("events").select(
-    "events.*",
-    db.raw(`
-      (
-        SELECT COUNT(*)::integer
-        FROM registrations
-        WHERE registrations.event_id = events.id
-      ) AS registration_count
-    `),
-  );
-}
+import type { EventInput } from "../schemas/event.schema.js";
 
 export class EventModel {
-  static async create(userId: string, data: EventInput): Promise<EventRecord> {
-    const [event] = await db("events")
+  static async create(userId: string, data: EventInput) {
+    const [row] = await db("events")
       .insert({
         user_id: userId,
         name: data.info.name,
@@ -26,96 +11,69 @@ export class EventModel {
         location: data.info.location || null,
         start_date: data.info.startDate || null,
         end_date: data.info.endDate || null,
-        price: parsePrice(data.info.price),
         registration_fields: JSON.stringify(data.registration.fields),
         appearance: JSON.stringify(data.appearance),
       })
       .returning("id");
-
-    const createdEvent = await eventQuery()
-      .where("events.id", event.id)
-      .first();
-
-    return createdEvent as EventRecord;
+    return this.findByIdAndUser(row.id, userId);
   }
 
-  static async findAllByUser(userId: string): Promise<EventRecord[]> {
-    return eventQuery()
+  static async findAllByUser(userId: string) {
+    return db("events")
+      .select("events.*")
+      .select(
+        db.raw(
+          "(SELECT COUNT(*)::integer FROM registrations WHERE registrations.event_id = events.id) AS registration_count",
+        ),
+      )
       .where("events.user_id", userId)
       .orderBy("events.created_at", "desc");
   }
 
-  static async findByIdAndUser(
-    eventId: string,
-    userId: string,
-  ): Promise<EventRecord | undefined> {
-    return eventQuery()
-      .where("events.id", eventId)
-      .andWhere("events.user_id", userId)
+  static async findByIdAndUser(eventId: string, userId: string) {
+    return db("events")
+      .select("events.*")
+      .select(
+        db.raw(
+          "(SELECT COUNT(*)::integer FROM registrations WHERE registrations.event_id = events.id) AS registration_count",
+        ),
+      )
+      .where({ "events.id": eventId, "events.user_id": userId })
       .first();
   }
 
-  static async update(
-    eventId: string,
-    userId: string,
-    data: EventInput,
-  ): Promise<EventRecord | undefined> {
-    const [event] = await db("events")
-      .where({
-        id: eventId,
-        user_id: userId,
-      })
+  static async findPublicById(eventId: string) {
+    return db("events").where({ id: eventId, status: "published" }).first();
+  }
+
+  static async update(eventId: string, userId: string, data: EventInput) {
+    const changed = await db("events")
+      .where({ id: eventId, user_id: userId })
       .update({
         name: data.info.name,
         description: data.info.description || null,
         location: data.info.location || null,
         start_date: data.info.startDate || null,
         end_date: data.info.endDate || null,
-        price: parsePrice(data.info.price),
         registration_fields: JSON.stringify(data.registration.fields),
         appearance: JSON.stringify(data.appearance),
         updated_at: db.fn.now(),
-      })
-      .returning("id");
-
-    if (!event) return undefined;
-
-    return EventModel.findByIdAndUser(eventId, userId);
-  }
-
-  static async findPublicById(
-    eventId: string,
-  ): Promise<EventRecord | undefined> {
-    return eventQuery().where("events.id", eventId).first();
-  }
-
-  static async delete(eventId: string, userId: string): Promise<void> {
-    await db("events")
-      .where({
-        id: eventId,
-        user_id: userId,
-      })
-      .delete();
+      });
+    return changed ? this.findByIdAndUser(eventId, userId) : undefined;
   }
 
   static async updateStatus(
     eventId: string,
     userId: string,
     status: "draft" | "published",
-  ): Promise<EventRecord | undefined> {
-    const [event] = await db("events")
-      .where({
-        id: eventId,
-        user_id: userId,
-      })
-      .update({
-        status,
-        updated_at: db.fn.now(),
-      })
-      .returning("id");
+  ) {
+    const changed = await db("events")
+      .where({ id: eventId, user_id: userId })
+      .update({ status, updated_at: db.fn.now() });
+    return changed ? this.findByIdAndUser(eventId, userId) : undefined;
+  }
 
-    if (!event) return undefined;
-
-    return EventModel.findByIdAndUser(eventId, userId);
+  static async delete(eventId: string, userId: string): Promise<void> {
+    await db("events").where({ id: eventId, user_id: userId }).delete();
   }
 }

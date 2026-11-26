@@ -1,36 +1,33 @@
-import type { Knex } from "knex";
 import { db } from "../../config/database.js";
-import { env } from "../../config/env.js";
-import { AsaasClient } from "./asaas.client.js";
-import { AppError } from "../../utils/app-error.js";
 import type { RegistrationData } from "../../types/registration.types.js";
+import { AppError } from "../../utils/app-error.js";
+import { AsaasClient } from "./asaas.client.js";
 
-type RegistrationForCustomer = {
+type RegistrationField = {
   id: string;
-  event_id: string;
-  data: RegistrationData;
-  asaas_customer_id: string | null;
-  registration_fields: Array<{
-    id: string;
-    type: string;
-    label: string;
-  }>;
+  type: string;
+  label: string;
+};
+
+type CustomerResult = {
+  customerId: string;
+  asaasCustomerId: string;
 };
 
 function getFieldValue(
-  registration: RegistrationForCustomer,
+  data: RegistrationData,
+  fields: RegistrationField[],
   type: string,
 ): string {
-  const field = registration.registration_fields.find(
+  const field = fields.find(
     (item) =>
       item.type === type &&
-      (type !== "text" ||
-        item.label.trim().toLowerCase() === "nome completo"),
+      (type !== "text" || item.label.trim().toLowerCase() === "nome completo"),
   );
 
   if (!field) return "";
 
-  const value = registration.data[field.id];
+  const value = data[field.id];
 
   return value === null || value === undefined ? "" : String(value).trim();
 }
@@ -40,105 +37,78 @@ function normalizeDigits(value: string): string {
 }
 
 export class AsaasCustomerService {
-  static async ensureCustomer(registrationId: string): Promise<string> {
-    if (!env.ASAAS_API_KEY) {
-      throw new AppError("Configure ASAAS_API_KEY para cadastrar clientes.", 503);
-    }
+  static async ensureCustomer(
+    data: RegistrationData,
+    fields: RegistrationField[],
+    externalReference: string,
+  ): Promise<CustomerResult> {
+    const name = getFieldValue(data, fields, "text");
+    const cpfCnpj = normalizeDigits(getFieldValue(data, fields, "cpf"));
+    const email = getFieldValue(data, fields, "email").toLowerCase();
+    const mobilePhone = normalizeDigits(getFieldValue(data, fields, "phone"));
 
-    const registration = await db("registrations")
-      .join("events", "registrations.event_id", "events.id")
-      .where("registrations.id", registrationId)
-      .select(
-        "registrations.id",
-        "registrations.event_id",
-        "registrations.data",
-        "registrations.asaas_customer_id",
-        "events.registration_fields",
-      )
-      .first() as RegistrationForCustomer | undefined;
-
-    if (!registration) {
-      throw new AppError("Inscrição não encontrada.", 404);
-    }
-
-    if (registration.asaas_customer_id) {
-      return registration.asaas_customer_id;
-    }
-
-    const name = getFieldValue(registration, "text");
-    const cpf = normalizeDigits(getFieldValue(registration, "cpf"));
-    const email = getFieldValue(registration, "email").toLowerCase();
-    const mobilePhone = normalizeDigits(getFieldValue(registration, "phone"));
-
-    if (!name || !cpf) {
+    if (!name || !cpfCnpj) {
       throw new AppError(
-        "A inscrição precisa ter nome completo e CPF para cadastrar o cliente no Asaas.",
+        "A inscrição precisa ter nome completo e CPF para cadastrar o cliente.",
         422,
       );
     }
 
-    if (![11, 14].includes(cpf.length)) {
+    if (cpfCnpj.length !== 11 && cpfCnpj.length !== 14) {
       throw new AppError("CPF/CNPJ inválido para cadastro no Asaas.", 422);
     }
 
-    return db.transaction(async (trx: Knex.Transaction) => {
-      // Serializa cadastros simultâneos do mesmo documento dentro desta aplicação.
+    return db.transaction(async (trx) => {
+      // Evita que duas inscrições simultâneas criem o mesmo cliente.
       await trx.raw("SELECT pg_advisory_xact_lock(hashtextextended(?, 0))", [
-        cpf,
+        cpfCnpj,
       ]);
 
-      const linkedCustomer = await trx("registrations as r")
-        .join("events as e", "r.event_id", "e.id")
-        .whereNotNull("r.asaas_customer_id")
-        .whereRaw(
-          `EXISTS (
-            SELECT 1
-            FROM jsonb_array_elements(e.registration_fields) AS field(value)
-            WHERE field.value->>'type' = 'cpf'
-              AND regexp_replace(
-                COALESCE(r.data ->> (field.value->>'id'), ''),
-                '[^0-9]',
-                '',
-                'g'
-              ) = ?
-          )`,
-          [cpf],
-        )
-        .first("r.asaas_customer_id");
+      const existingCustomer = await trx("customers")
+        .where({ cpf_cnpj: cpfCnpj })
+        .first("id", "asaas_customer_id");
 
-      if (linkedCustomer?.asaas_customer_id) {
-        await trx("registrations")
-          .where({ id: registrationId })
-          .update({
-            asaas_customer_id: linkedCustomer.asaas_customer_id,
-            updated_at: trx.fn.now(),
-          });
-
-        return linkedCustomer.asaas_customer_id as string;
+      if (existingCustomer) {
+        return {
+          customerId: existingCustomer.id,
+          asaasCustomerId: existingCustomer.asaas_customer_id,
+        };
       }
 
-      // Recupera um cliente que possa ter sido criado no Asaas antes de um timeout
-      // ou de uma falha ao persistir o ID na inscrição.
-      const existingCustomer = await AsaasClient.findCustomerByCpf(cpf);
+      if (!existingCustomer && !process.env.ASAAS_API_KEY) {
+        throw new AppError(
+          "Configure ASAAS_API_KEY para cadastrar clientes.",
+          503,
+        );
+      }
 
-      const customer =
-        existingCustomer ??
+      const remoteCustomer = await AsaasClient.findCustomerByCpf(cpfCnpj);
+
+      const asaasCustomer =
+        remoteCustomer ??
         (await AsaasClient.createCustomer({
           name,
-          cpfCnpj: cpf,
+          cpfCnpj,
           ...(email ? { email } : {}),
           ...(mobilePhone ? { mobilePhone } : {}),
-          externalReference: registrationId,
+          externalReference,
         }));
 
-      await trx("registrations")
-        .where({ id: registrationId })
-        .update({
-          asaas_customer_id: customer.id,
-          updated_at: trx.fn.now(),
-        });
+      const [customer] = await trx("customers")
+        .insert({
+          id: trx.raw("gen_random_uuid()"),
+          name,
+          cpf_cnpj: cpfCnpj,
+          email: email || null,
+          mobile_phone: mobilePhone || null,
+          asaas_customer_id: asaasCustomer.id,
+        })
+        .returning(["id", "asaas_customer_id"]);
 
-      return customer.id;
+      return {
+        customerId: customer.id,
+        asaasCustomerId: customer.asaas_customer_id,
+      };
     });
   }
 }

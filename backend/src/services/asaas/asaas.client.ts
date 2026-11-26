@@ -1,6 +1,42 @@
 import { env } from "../../config/env.js";
 import { AppError } from "../../utils/app-error.js";
 
+export type AsaasBillingType = "PIX" | "BOLETO" | "CREDIT_CARD" | "UNDEFINED";
+
+export type AsaasPayment = {
+  id: string;
+  customer: string;
+  status: string;
+  billingType: string;
+  value: number;
+  dateCreated?: string;
+  dueDate?: string;
+  paymentDate?: string | null;
+  clientPaymentDate?: string | null;
+  invoiceUrl?: string | null;
+  installment?: string | null;
+  externalReference?: string | null;
+};
+
+type CreateAsaasPaymentInput = {
+  customer: string;
+  billingType: AsaasBillingType;
+  dueDate: string;
+  description: string;
+  externalReference: string;
+} & (
+  | {
+      value: number;
+      installmentCount?: never;
+      totalValue?: never;
+    }
+  | {
+      value?: never;
+      installmentCount: number;
+      totalValue: number;
+    }
+);
+
 type AsaasCustomer = {
   id: string;
   name: string;
@@ -9,6 +45,8 @@ type AsaasCustomer = {
 
 type AsaasCustomerList = {
   data: AsaasCustomer[];
+  totalCount?: number;
+  hasMore?: boolean;
 };
 
 type CreateCustomerInput = {
@@ -94,13 +132,57 @@ export class AsaasClient {
     return responseBody as T;
   }
 
-  static async findCustomerByCpf(cpfCnpj: string): Promise<AsaasCustomer | null> {
+  static async createPayment(
+    input: CreateAsaasPaymentInput,
+  ): Promise<AsaasPayment> {
+    return this.request<AsaasPayment>("/payments", {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+  }
+
+  static async findPayment(paymentId: string): Promise<AsaasPayment> {
+    return this.request<AsaasPayment>(
+      `/payments/${encodeURIComponent(paymentId)}`,
+      { method: "GET" },
+    );
+  }
+
+  static async findCustomerByCpf(
+    cpfCnpj: string,
+  ): Promise<AsaasCustomer | null> {
+    const normalizedCpf = cpfCnpj.replace(/\D/g, "");
+
     const result = await this.request<AsaasCustomerList>(
-      `/customers?cpfCnpj=${encodeURIComponent(cpfCnpj)}&limit=10`,
+      `/customers?cpfCnpj=${encodeURIComponent(normalizedCpf)}&limit=100&offset=0`,
       { method: "GET" },
     );
 
-    return result.data?.[0] ?? null;
+    if (!Array.isArray(result.data)) {
+      throw new AppError(
+        "Resposta inesperada ao consultar clientes no Asaas.",
+        502,
+      );
+    }
+
+    const customer = result.data.find(
+      (item) => item.cpfCnpj?.replace(/\D/g, "") === normalizedCpf,
+    );
+
+    if (customer) {
+      return customer;
+    }
+
+    // Não criar outro cliente se a API retornou resultados
+    // mas não conseguimos confirmar a correspondência.
+    if (result.data.length > 0 || (result.totalCount ?? 0) > 0) {
+      throw new AppError(
+        "Não foi possível confirmar o cliente existente no Asaas.",
+        502,
+      );
+    }
+
+    return null;
   }
 
   static async createCustomer(
@@ -112,7 +194,9 @@ export class AsaasClient {
     });
   }
 
-  static async listWebhooks(): Promise<Array<{ id: string; url: string; name: string }>> {
+  static async listWebhooks(): Promise<
+    Array<{ id: string; url: string; name: string }>
+  > {
     const result = await this.request<{
       data: Array<{ id: string; url: string; name: string }>;
     }>("/webhooks", { method: "GET" });
