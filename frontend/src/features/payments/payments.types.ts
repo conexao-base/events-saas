@@ -12,27 +12,6 @@ export interface PaymentSettingsPayload {
   dueDays: number
 }
 
-export interface PaymentRule {
-  id: string
-  name: string
-  startDate: string
-  endDate: string
-  billingTypes: BillingType[]
-  maxInstallments: number
-  active: boolean
-  position: number
-}
-
-export interface PaymentRulePayload {
-  name: string
-  startDate: string
-  endDate: string
-  billingTypes: BillingType[]
-  maxInstallments: number
-  active: boolean
-  position: number
-}
-
 export interface PaymentLot {
   id: string
   eventId: string
@@ -41,6 +20,8 @@ export interface PaymentLot {
   startDate: string
   endDate: string
   capacity: number | null
+  billingTypes: BillingType[]
+  maxInstallments: number
   active: boolean
   position: number
 }
@@ -51,6 +32,8 @@ export interface PaymentLotPayload {
   startDate: string
   endDate: string
   capacity: number | null
+  billingTypes: BillingType[]
+  maxInstallments: number
   active: boolean
   position: number
 }

@@ -24,7 +24,6 @@ const initialInfo: InfoFormData = {
   name: '',
   description: '',
   location: '',
-  price: '',
   startDate: '',
   endDate: '',
 }

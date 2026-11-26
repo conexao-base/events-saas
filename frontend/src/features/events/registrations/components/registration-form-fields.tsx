@@ -15,8 +15,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { CityInput } from '@/features/events/components/city-input'
-import type { RegistrationField } from '@/features/events/event-builder/registration/types/registration'
 import { DatePickerField } from '@/features/events/event-builder/info/components/date-picker-field'
+import type { RegistrationField } from '@/features/events/event-builder/registration/types/registration'
 import type { RegistrationFormMethods } from '../types/registration-form.types'
 
 const statusOptions = [
@@ -82,6 +82,7 @@ export function RegistrationFields({ form, fields }: RegistrationFieldsProps) {
                     ) : (
                       <Input
                         {...inputField}
+                        disabled={['cpf', 'email'].includes(field.type)}
                         type={getRegistrationInputType(field.type)}
                         placeholder={
                           getRegistrationFieldPlaceholder(field.type) ??

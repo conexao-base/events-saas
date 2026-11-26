@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { billingTypeSchema } from "./event-payment.schema.js";
+import { billingTypeSchema } from "../../../shared/schemas/event-payment.schema.js";
 
 export const publicRegistrationSchema = z.object({
   data: z.record(

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,6 +15,7 @@ import { Switch } from '@/components/ui/switch'
 import { usePayments } from '../payments-provider'
 
 export function PaymentSettings() {
+  const navigate = useNavigate()
   const { settings, saveAll, saving } = usePayments()
 
   const [enabled, setEnabled] = useState(false)
@@ -27,6 +29,8 @@ export function PaymentSettings() {
   async function handleSubmit() {
     try {
       await saveAll({ enabled, dueDays })
+
+      await navigate({ to: '/events' })
     } catch (error) {
       console.error('Erro ao salvar configurações:', error)
     }
