@@ -44,7 +44,7 @@ export interface ApiEvent {
   registration_count: number
   registration_fields: RegistrationFieldDTO[]
   appearance: EventAppearanceDTO
-  status: 'draft' | 'published'
+  status: 'draft' | 'published' | 'ended'
 }
 
 interface EventResponse {

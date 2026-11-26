@@ -5,7 +5,7 @@ import { Switch } from '@/components/ui/switch'
 
 type EventStatusProps = {
   eventId: string
-  status: 'draft' | 'published'
+  status: 'draft' | 'published' | 'ended'
 }
 
 export function EventStatus({ eventId, status }: EventStatusProps) {
@@ -28,7 +28,11 @@ export function EventStatus({ eventId, status }: EventStatusProps) {
     },
 
     onError: () => {
-      toast.error('Não foi possível atualizar o status do evento.')
+      toast.error(
+        status === 'ended'
+          ? 'O prazo deste evento já foi encerrado.'
+          : 'Não foi possível atualizar o status do evento.'
+      )
     },
   })
 

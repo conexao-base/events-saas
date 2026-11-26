@@ -1,6 +1,7 @@
 import { api } from '@/lib/api'
 import { publicApi } from '@/lib/public-api'
 import type {
+  BillingType,
   PaymentLot,
   PaymentLotPayload,
   PaymentSettings,
@@ -32,8 +33,21 @@ interface ApiPaymentLot {
   start_date: string
   end_date: string
   capacity: number | null
-  billing_types: string[] | string
+  billing_types: BillingType[] | string
   max_installments: number
+  active: boolean
+  position: number
+}
+
+interface ApiPublicPaymentLot {
+  id: string
+  name: string
+  value: number | string
+  startDate: string
+  endDate: string
+  capacity: number | null
+  billingTypes: BillingType[]
+  maxInstallments: number
   active: boolean
   position: number
 }
@@ -41,7 +55,7 @@ interface ApiPaymentLot {
 interface PublicPaymentOptionsResponse {
   payment: {
     enabled: boolean
-    lots: ApiPaymentLot[]
+    lots: ApiPublicPaymentLot[]
   }
 }
 
@@ -73,6 +87,22 @@ function mapLot(data: ApiPaymentLot): PaymentLot {
         ? JSON.parse(data.billing_types)
         : data.billing_types,
     maxInstallments: data.max_installments,
+    active: data.active,
+    position: data.position,
+  }
+}
+
+function mapPublicLot(data: ApiPublicPaymentLot): PaymentLot {
+  return {
+    id: data.id,
+    eventId: '',
+    name: data.name,
+    value: Number(data.value),
+    startDate: data.startDate,
+    endDate: data.endDate,
+    capacity: data.capacity,
+    billingTypes: data.billingTypes,
+    maxInstallments: data.maxInstallments,
     active: data.active,
     position: data.position,
   }
@@ -143,7 +173,7 @@ export const paymentService = {
 
     return {
       enabled: data.payment.enabled,
-      lots: data.payment.lots.map(mapLot),
+      lots: data.payment.lots.map(mapPublicLot),
     }
   },
 }

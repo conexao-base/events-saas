@@ -26,7 +26,7 @@ export async function up(knex: Knex): Promise<void> {
         }),
       );
     table
-      .enu("status", ["draft", "published"])
+      .enu("status", ["draft", "published", "ended"])
       .notNullable()
       .defaultTo("draft");
     table
